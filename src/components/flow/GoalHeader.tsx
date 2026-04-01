@@ -1,9 +1,9 @@
 import { Flow } from '@/types/flow'
 
-const DIFFICULTY_DOTS: Record<string, number> = {
-  '입문': 1,
-  '중급': 2,
-  '고급': 3,
+const DIFFICULTY_COLOR: Record<string, string> = {
+  '입문': 'text-emerald-600 bg-emerald-50',
+  '중급': 'text-amber-600 bg-amber-50',
+  '고급': 'text-red-500 bg-red-50',
 }
 
 interface GoalHeaderProps {
@@ -11,64 +11,45 @@ interface GoalHeaderProps {
 }
 
 export function GoalHeader({ flow }: GoalHeaderProps) {
-  const dots = DIFFICULTY_DOTS[flow.difficulty] ?? 1
+  const diffColor = DIFFICULTY_COLOR[flow.difficulty] ?? 'text-gray-500 bg-gray-100'
 
   return (
-    <div className="mb-8">
+    <div className="mb-6">
       {/* Tags */}
-      <div className="flex flex-wrap gap-2 mb-4">
+      <div className="flex flex-wrap gap-1.5 mb-4">
         {flow.tags.map((tag) => (
           <span
             key={tag}
-            className="text-xs font-semibold text-gray-500 bg-gray-100 px-2.5 py-1 rounded-full tracking-wide"
+            className="text-[11px] font-semibold text-gray-400 bg-gray-100 px-2.5 py-0.5 rounded-full tracking-wide uppercase"
           >
             {tag}
           </span>
         ))}
       </div>
 
-      {/* Title */}
-      <h1 className="text-2xl font-bold text-gray-900 mb-2">
+      {/* Title — dominant */}
+      <h1 className="text-3xl sm:text-4xl font-bold text-gray-900 leading-tight tracking-tight mb-3">
         {flow.goal}
       </h1>
 
       {/* Description */}
-      <p className="text-sm text-gray-400 mb-5">
+      <p className="text-[15px] text-gray-400 leading-relaxed mb-5 max-w-[600px]">
         {flow.description}
       </p>
 
-      {/* Meta */}
-      <div className="flex items-center gap-5">
-        <div>
-          <p className="text-xs text-gray-400 mb-0.5">난이도</p>
-          <div className="flex items-center gap-1.5">
-            <span className="text-sm font-semibold text-gray-700">{flow.difficulty}</span>
-            <div className="flex gap-0.5">
-              {[1, 2, 3].map((i) => (
-                <span
-                  key={i}
-                  className={`text-xs ${i <= dots ? 'text-gray-900' : 'text-gray-200'}`}
-                >
-                  ⚡
-                </span>
-              ))}
-            </div>
-          </div>
-        </div>
-
-        <div className="w-px h-8 bg-gray-100" />
-
-        <div>
-          <p className="text-xs text-gray-400 mb-0.5">예상 시간</p>
-          <p className="text-sm font-semibold text-gray-700">{flow.estimatedTime}</p>
-        </div>
-
-        <div className="w-px h-8 bg-gray-100" />
-
-        <div>
-          <p className="text-xs text-gray-400 mb-0.5">단계</p>
-          <p className="text-sm font-semibold text-gray-700">{flow.steps.length}단계</p>
-        </div>
+      {/* Meta row — compact pills */}
+      <div className="flex items-center flex-wrap gap-2">
+        <span className={`text-[12px] font-semibold px-2.5 py-1 rounded-full ${diffColor}`}>
+          {flow.difficulty}
+        </span>
+        <span className="text-gray-200 text-sm">·</span>
+        <span className="text-[13px] font-medium text-gray-400">
+          ⏱ {flow.estimatedTime}
+        </span>
+        <span className="text-gray-200 text-sm">·</span>
+        <span className="text-[13px] font-medium text-gray-400">
+          {flow.steps.length}단계
+        </span>
       </div>
     </div>
   )

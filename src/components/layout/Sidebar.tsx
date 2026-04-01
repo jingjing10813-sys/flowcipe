@@ -44,7 +44,7 @@ export function Sidebar() {
 
   return (
     <aside
-      className="fixed left-0 z-40 w-[240px] bg-white border-r border-[#E8E9EC] flex flex-col overflow-y-auto"
+      className="hidden lg:flex fixed left-0 z-40 w-[240px] bg-white border-r border-[#E8E9EC] flex-col overflow-y-auto"
       style={{ top: 'var(--header-height)', height: 'calc(100vh - var(--header-height))' }}
     >
       {/* Navigation */}

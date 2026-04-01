@@ -6,6 +6,7 @@ import { StepStatus } from '@/types/flow'
 export function useFlowState(totalSteps: number) {
   const [currentStepIndex, setCurrentStepIndex] = useState(0)
   const [completedSteps, setCompletedSteps] = useState<Set<number>>(new Set())
+  const [copiedSteps, setCopiedSteps] = useState<Set<number>>(new Set())
 
   const getStepStatus = useCallback(
     (index: number): StepStatus => {
@@ -20,6 +21,10 @@ export function useFlowState(totalSteps: number) {
     setCurrentStepIndex(index)
   }, [])
 
+  const markStepCopied = useCallback((index: number) => {
+    setCopiedSteps((prev) => new Set(prev).add(index))
+  }, [])
+
   const completeCurrentStep = useCallback(() => {
     setCompletedSteps((prev) => new Set(prev).add(currentStepIndex))
     if (currentStepIndex < totalSteps - 1) {
@@ -32,8 +37,10 @@ export function useFlowState(totalSteps: number) {
   return {
     currentStepIndex,
     completedSteps,
+    copiedSteps,
     getStepStatus,
     goToStep,
+    markStepCopied,
     completeCurrentStep,
     isFlowComplete,
   }

@@ -10,19 +10,26 @@ export interface Tool {
   model?: string
   url: string
   icon: string
+  free?: boolean
+  freeLimit?: string
+  reason?: string
 }
 
 export interface StepConfig {
   [key: string]: string
 }
 
+export type StepType = 'prompt' | 'command'
+
 export interface Step {
   id: string
   order: number
   title: string
   tool: Tool
+  stepType: StepType
   promptType: PromptType
   prompt?: string
+  commandGuide?: string
   config?: StepConfig
   inputGuide: string
   outputGuide: string

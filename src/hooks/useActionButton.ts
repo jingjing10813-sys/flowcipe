@@ -4,7 +4,7 @@ import { useState, useCallback } from 'react'
 
 export type ButtonState = 'idle' | 'copied' | 'opening'
 
-export function useActionButton() {
+export function useActionButton(onCopied?: () => void) {
   const [buttonState, setButtonState] = useState<ButtonState>('idle')
 
   const handleAction = useCallback(async (prompt: string, toolUrl: string) => {
@@ -25,6 +25,7 @@ export function useActionButton() {
     }
 
     setButtonState('copied')
+    onCopied?.()
 
     setTimeout(() => {
       setButtonState('opening')
@@ -34,7 +35,7 @@ export function useActionButton() {
         setButtonState('idle')
       }, 1500)
     }, 800)
-  }, [buttonState])
+  }, [buttonState, onCopied])
 
   return { buttonState, handleAction }
 }

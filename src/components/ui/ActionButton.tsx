@@ -7,10 +7,11 @@ interface ActionButtonProps {
   toolUrl: string
   toolName: string
   label?: string
+  onCopied?: () => void
 }
 
-export function ActionButton({ prompt, toolUrl, toolName, label }: ActionButtonProps) {
-  const { buttonState, handleAction } = useActionButton()
+export function ActionButton({ prompt, toolUrl, toolName, label, onCopied }: ActionButtonProps) {
+  const { buttonState, handleAction } = useActionButton(onCopied)
 
   const idleLabel = label ?? `Copy & Open ${toolName}`
 

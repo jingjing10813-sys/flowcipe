@@ -5,15 +5,26 @@ import { useRouter } from 'next/navigation'
 import { LoadingFlow } from './LoadingFlow'
 
 const EXAMPLE_GOALS = [
-  { label: '#블로그 글을 영상으로 만들기', value: '블로그 글을 유튜브 영상으로 만들고 싶어' },
-  { label: '#SNS 게시물 자동화', value: 'SNS 게시물을 자동으로 만들고 싶어' },
-  { label: '#GPT-4로 고객 피드백 분석', value: 'GPT-4로 고객 피드백을 분석하고 싶어' },
+  { label: '#코딩 없이 AI로 앱 만들기', value: '코딩 없이 AI로 웹앱을 만들고 싶어' },
+  { label: '#블로그 글을 유튜브 쇼츠로', value: '블로그 글을 유튜브 쇼츠 영상으로 자동 제작하고 싶어' },
+  { label: '#AI 에이전트로 업무 자동화', value: 'AI 에이전트로 이메일·회의록·일정을 자동화하고 싶어' },
 ]
 
-export function GoalInput() {
+interface GoalInputProps {
+  value?: string
+  onChange?: (value: string) => void
+}
+
+export function GoalInput({ value: externalValue, onChange: externalOnChange }: GoalInputProps) {
   const router = useRouter()
-  const [goal, setGoal] = useState('')
+  const [internalGoal, setInternalGoal] = useState('')
   const [isLoading, setIsLoading] = useState(false)
+
+  const goal = externalValue !== undefined ? externalValue : internalGoal
+  const setGoal = (v: string) => {
+    setInternalGoal(v)
+    externalOnChange?.(v)
+  }
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -56,7 +67,7 @@ export function GoalInput() {
         <textarea
           value={goal}
           onChange={(e) => setGoal(e.target.value)}
-          placeholder="어떤 목표를 달성하고 싶으신가요?"
+          placeholder="무엇을 만들고 싶으세요?"
           rows={3}
           className="w-full resize-none rounded-[16px] border border-gray-200 bg-white px-5 py-4 text-base text-gray-900 placeholder:text-gray-300 focus:outline-none focus:ring-2 focus:ring-gray-900 transition-all"
           onKeyDown={(e) => {
@@ -80,7 +91,7 @@ export function GoalInput() {
           }
         `}
       >
-        Flow 만들기 →
+        지금 실행하기 →
       </button>
 
       {/* Example Goals */}

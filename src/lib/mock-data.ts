@@ -58,6 +58,7 @@ export const MOCK_FLOW: Flow = {
       order: 1,
       title: '텍스트 요약',
       tool: TOOLS.gpt4o,
+      stepType: 'prompt',
       promptType: 'system',
       prompt: `첨부된 블로그 글의 핵심 내용을 3가지 주요 포인트로 요약하고, 영상의 시각적 흐름을 고려하여 각 포인트의 핵심 메시지를 추출하세요.
 
@@ -77,6 +78,7 @@ export const MOCK_FLOW: Flow = {
       order: 2,
       title: '스크립트 생성',
       tool: TOOLS.claude,
+      stepType: 'prompt',
       promptType: 'user',
       prompt: `요약된 포인트를 바탕으로 5분 길이의 유튜브 스크립트를 작성해주세요. 전문적이면서도 친근하게, 도입부에서는 시청자의 주의를 끌 수 있는 후킹 멘트를 포함해.
 
@@ -95,6 +97,7 @@ export const MOCK_FLOW: Flow = {
       order: 3,
       title: '영상 제작',
       tool: TOOLS.runway,
+      stepType: 'prompt',
       promptType: 'visual',
       prompt: `Cinematic close-up of a high-tech digital workspace, soft blue lighting, hyper-realistic, 4k, smooth camera motion, futuristic interface elements floating in the air, professional presenter speaking naturally, warm studio atmosphere, shallow depth of field`,
       inputGuide: '위 프롬프트를 Runway에 붙여넣고 스크립트 길이에 맞게 영상 길이를 설정하세요',
@@ -106,6 +109,7 @@ export const MOCK_FLOW: Flow = {
       order: 4,
       title: '음성 추가',
       tool: TOOLS.elevenlabs,
+      stepType: 'prompt',
       promptType: 'config',
       config: {
         'Voice': 'Fin (Professional Narrator)',

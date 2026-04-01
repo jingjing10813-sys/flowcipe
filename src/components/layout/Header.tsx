@@ -26,7 +26,7 @@ export function Header() {
               <path d="M5 12h14M12 5l7 7-7 7" />
             </svg>
           </div>
-          <span className="text-[15px] font-bold text-gray-900 tracking-tight">Flowcipe</span>
+          <span className="text-[15px] font-bold text-gray-900 tracking-tight">Run<span className="text-gray-400">flo</span></span>
         </Link>
 
         {/* Nav */}

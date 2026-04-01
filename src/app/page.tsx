@@ -1,3 +1,6 @@
+'use client'
+
+import { useState } from 'react'
 import { AppLayout } from '@/components/layout/AppLayout'
 import { PageShell } from '@/components/layout/PageShell'
 import { GoalInput } from '@/components/ui/GoalInput'
@@ -6,56 +9,125 @@ import Link from 'next/link'
 const POPULAR_RECIPES = [
   {
     id: 'mock-flow-1',
-    badge: '인기 레시피',
-    updatedAt: '2시간 전',
-    title: '콘텐츠 변환하기',
-    description: '하나의 소스 데이터로 블로그, 뉴스레터, SNS 게시물까지 한 번에 생성하는 최적의 워크플로우',
+    badge: '🔥 지금 뜨는 레시피',
+    updatedAt: '방금 전',
+    title: '블로그 글 → 유튜브 쇼츠 자동 제작',
+    description: '텍스트 블로그를 AI가 쇼츠 대본으로 압축하고 AI 아바타 영상까지 자동 생성합니다',
     steps: [
-      { no: '01', label: '데이터 수집', sub: '구글 스프레드시트' },
-      { no: '02', label: 'LLM 추론', sub: 'GPT-4로 핵심 분석 및 요약' },
-      { no: '03', label: '멀티 플랫폼 출력', sub: '블로그·SNS·뉴스레터' },
+      { no: '01', label: '쇼츠 대본 압축', sub: 'Claude' },
+      { no: '02', label: 'AI 아바타 영상', sub: 'HeyGen' },
+      { no: '03', label: '자막·업로드', sub: 'Vrew' },
     ],
-    tools: ['Claude', 'GPT-4o', 'Midjourney'],
-    category: 'CONTENT CREATION',
+    tools: ['Claude', 'HeyGen', 'Vrew'],
+    category: 'VIDEO',
   },
   {
     id: 'mock-flow-1',
-    badge: '이번주 인기',
-    updatedAt: '1일 전',
-    title: 'SNS 게시물 자동화',
-    description: '브랜드 키워드와 트렌드를 분석해 최적화된 SNS 게시물을 자동으로 생성합니다',
+    badge: '🚀 Vibe Coding',
+    updatedAt: '3시간 전',
+    title: '코딩 없이 AI로 앱 만들기',
+    description: '자연어 프롬프트만으로 웹앱·모바일앱을 기획부터 배포까지 완성하는 노코드 개발 워크플로우',
     steps: [
-      { no: '01', label: '트렌드 분석', sub: 'GPT-4 검색 연동' },
-      { no: '02', label: '카피 생성', sub: 'Claude 3.5 Sonnet' },
-      { no: '03', label: '이미지 생성', sub: 'Midjourney v6' },
+      { no: '01', label: '앱 기획서 작성', sub: 'Claude' },
+      { no: '02', label: '앱 자동 빌드', sub: 'Cursor / Replit' },
+      { no: '03', label: '원클릭 배포', sub: 'Vercel' },
     ],
-    tools: ['Claude', 'GPT-4o', 'Midjourney'],
+    tools: ['Claude', 'Cursor', 'Vercel'],
+    category: 'PRODUCTIVITY',
+  },
+  {
+    id: 'mock-flow-1',
+    badge: '📊 리서치 자동화',
+    updatedAt: '1시간 전',
+    title: 'AI 리서치 보고서 자동 작성',
+    description: 'AI 에이전트가 웹 검색부터 핵심 인사이트 추출, 보고서 완성까지 자동으로 처리합니다',
+    steps: [
+      { no: '01', label: '웹 리서치', sub: 'Perplexity Pro' },
+      { no: '02', label: '인사이트 분석', sub: 'Claude' },
+      { no: '03', label: '보고서 완성', sub: 'Notion AI' },
+    ],
+    tools: ['Perplexity', 'Claude', 'Notion AI'],
+    category: 'RESEARCH',
+  },
+  {
+    id: 'mock-flow-1',
+    badge: '✨ AI 디자인',
+    updatedAt: '5시간 전',
+    title: 'AI로 UI/UX 목업 즉시 생성',
+    description: '텍스트 설명만으로 반응형 UI 화면을 자동 생성하고 Figma로 바로 내보냅니다',
+    steps: [
+      { no: '01', label: 'UI 구조 기획', sub: 'Claude' },
+      { no: '02', label: 'UI 화면 생성', sub: 'Google Stitch' },
+      { no: '03', label: 'Figma 내보내기', sub: 'Google Stitch' },
+    ],
+    tools: ['Claude', 'Google Stitch', 'Figma'],
+    category: 'DESIGN',
+  },
+  {
+    id: 'mock-flow-1',
+    badge: '📣 마케팅 자동화',
+    updatedAt: '2일 전',
+    title: 'SNS 콘텐츠 에이전트 자동화',
+    description: 'AI 에이전트가 콘텐츠 캘린더 생성부터 플랫폼별 카피 작성·예약 발행까지 자동 처리합니다',
+    steps: [
+      { no: '01', label: '콘텐츠 캘린더', sub: 'ChatGPT' },
+      { no: '02', label: '카피 자동 생성', sub: 'Jasper AI' },
+      { no: '03', label: '예약 자동 발행', sub: 'Zapier AI' },
+    ],
+    tools: ['ChatGPT', 'Jasper', 'Zapier AI'],
     category: 'MARKETING',
+  },
+  {
+    id: 'mock-flow-1',
+    badge: '⚡ 업무 자동화',
+    updatedAt: '1일 전',
+    title: 'AI 에이전트 업무 자동화',
+    description: '회의록 요약·이메일 처리·일정 관리를 AI 에이전트가 자율적으로 처리합니다',
+    steps: [
+      { no: '01', label: '회의록 자동 요약', sub: 'Microsoft Copilot' },
+      { no: '02', label: '이메일 자동 처리', sub: 'Zapier AI' },
+      { no: '03', label: '주간 계획 정리', sub: 'Notion AI' },
+    ],
+    tools: ['Copilot', 'Zapier AI', 'Notion AI'],
+    category: 'PRODUCTIVITY',
   },
 ]
 
 const TESTIMONIALS = [
   {
     stars: 5,
-    text: '목표를 쓰면 Flow가 바로 나와서 너무 편해요. 매번 툴 찾느라 고민하던 시간이 사라졌어요.',
-    name: '김지수',
-    role: 'CONTENT CREATOR',
+    text: 'Vibe Coding으로 앱 만들려다 막혔는데, Runflo가 Cursor랑 Claude 어떻게 연결하는지 바로 알려줬어요. 진짜 신기했음.',
+    name: '이준혁',
+    role: 'INDIE HACKER',
   },
   {
     stars: 5,
-    text: '비즈니스 프로세스를 AI로 전환하는 가장 빠른 방법. 팀 전체에 공유했습니다.',
-    name: '박성학',
-    role: 'TECH CONSULTANT',
+    text: '쇼츠 자동화 워크플로우 덕분에 매일 영상 올리고 있어요. HeyGen이랑 Vrew 조합은 몰랐는데 Runflo가 알려줬어요.',
+    name: '박소연',
+    role: 'YOUTUBE CREATOR',
   },
   {
     stars: 5,
-    text: '다음 할 일을 항상 알려줘서 막히는 게 없어요. 전체 워크플로우를 한눈에 파악할 수 있어요.',
-    name: '이진아',
-    role: 'E-COMMERCE OWNER',
+    text: 'Google Stitch 써서 UI 목업 뽑는 플로우 만들고 나서 디자인 속도가 3배 빨라졌어요. 툴 추천이 항상 최신이라 좋아요.',
+    name: '김태민',
+    role: 'PRODUCT DESIGNER',
   },
 ]
 
+const CHIP_SUGGESTIONS: { label: string; value: string }[] = [
+  { label: '#코딩 없이 AI로 앱 만들기', value: '코딩 없이 AI로 웹앱을 만들고 싶어' },
+  { label: '#블로그 글을 유튜브 쇼츠로', value: '블로그 글을 유튜브 쇼츠 영상으로 자동 제작하고 싶어' },
+  { label: '#AI로 UI 목업 즉시 생성', value: 'AI로 UI/UX 목업을 즉시 생성하고 Figma로 내보내고 싶어' },
+  { label: '#AI 에이전트로 이메일 자동화', value: 'AI 에이전트로 이메일·회의록·일정을 자동화하고 싶어' },
+  { label: '#10분 만에 리서치 보고서 완성', value: '10분 만에 AI로 시장조사 보고서를 작성하고 싶어' },
+  { label: '#인스타 릴스 AI 자동 제작', value: '인스타그램 릴스를 AI로 자동 제작하고 싶어' },
+  { label: '#AI로 브랜드 디자인 시안 만들기', value: 'AI로 브랜드 디자인 시안을 빠르게 만들고 싶어' },
+  { label: '#SNS 콘텐츠 에이전트 자동화', value: 'SNS 콘텐츠 기획·작성·발행을 AI 에이전트로 자동화하고 싶어' },
+]
+
 export default function Home() {
+  const [goal, setGoal] = useState('')
+
   return (
     <AppLayout>
       {/* ── Hero ── */}
@@ -65,41 +137,42 @@ export default function Home() {
           <div className="flex justify-center mb-7">
             <span className="inline-flex items-center gap-2 text-[13px] font-medium text-gray-500 bg-gray-100 px-4 py-1.5 rounded-full">
               <span className="w-1.5 h-1.5 rounded-full bg-green-400 inline-block" />
-              12,000명 이상의 크리에이터가 사용 중
+              AI 워크플로우를 실행 중인 12,000명
             </span>
           </div>
 
           {/* Headline */}
           <h1 className="text-center text-[46px] font-bold text-gray-900 leading-[1.2] tracking-tight mb-5">
-            당신의 AI 워크플로우를
+            AI, 어디서 시작해야 할지
             <br />
-            <span className="text-gray-400">레시피</span>로 만드세요
+            <span className="text-gray-400">모르겠다면.</span>
           </h1>
           <p className="text-center text-[16px] text-gray-400 leading-relaxed mb-10">
-            복잡한 자동화도 단계별로 가이드해 드립니다.
+            목표를 입력하면 실행 흐름이 자동으로 설계됩니다.
             <br />
-            목표를 입력하면 완벽한 실행 흐름이 탄생합니다.
+            무엇을, 어떻게, 어떤 순서로 해야 할지 고민할 필요 없습니다.
           </p>
 
           {/* Search / Goal Input */}
           <div className="max-w-[600px] mx-auto mb-6">
-            <GoalInput />
+            <GoalInput value={goal} onChange={setGoal} />
           </div>
 
           {/* Hashtag pills */}
           <div className="flex flex-wrap justify-center gap-2 pb-12">
-            {[
-              '#블로그 글을 영상으로 만들기',
-              '#SNS 게시물 자동화',
-              '#GPT-4로 고객 피드백 분석',
-              '#이미지 배너 자동 생성',
-            ].map((tag) => (
-              <span
-                key={tag}
-                className="text-[13px] text-gray-400 bg-gray-50 border border-[#E8E9EC] px-3 py-1.5 rounded-full cursor-pointer hover:border-gray-400 hover:text-gray-700 transition-all"
+            {CHIP_SUGGESTIONS.map((chip) => (
+              <button
+                key={chip.label}
+                type="button"
+                onClick={() => setGoal(chip.value)}
+                className={`text-[13px] px-3 py-1.5 rounded-full border transition-all
+                  ${goal === chip.value
+                    ? 'bg-gray-900 text-white border-gray-900'
+                    : 'text-gray-400 bg-gray-50 border-[#E8E9EC] hover:border-gray-400 hover:text-gray-700'
+                  }`}
               >
-                {tag}
-              </span>
+                {chip.label}
+              </button>
             ))}
           </div>
         </PageShell>
@@ -115,7 +188,7 @@ export default function Home() {
             </Link>
           </div>
 
-          <div className="grid grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
             {POPULAR_RECIPES.map((recipe, i) => (
               <div key={i} className="bg-white rounded-[16px] border border-[#E8E9EC] p-5 hover:shadow-md transition-all">
                 {/* Card header */}
@@ -195,19 +268,19 @@ export default function Home() {
         {/* ── CTA ── */}
         <div className="bg-gray-900 rounded-[20px] px-10 py-12 text-center mb-10">
           <h2 className="text-[30px] font-bold text-white leading-tight mb-3">
-            지금 바로 첫 번째 레시피를
+            다음 행동이 막힌다면,
             <br />
-            구축해 보세요
+            지금 바로 첫 번째 Flow를 만드세요.
           </h2>
           <p className="text-[14px] text-gray-400 mb-8">
-            복잡한 설정 없이, 클릭 몇 번으로 AI 자동화를 시작할 수 있습니다.
+            목표만 입력하면 됩니다. 나머지는 자동으로 설계됩니다.
           </p>
           <div className="flex items-center justify-center gap-3">
             <Link
               href="/"
               className="bg-white text-gray-900 text-[14px] font-semibold px-6 py-3 rounded-[10px] hover:bg-gray-100 transition-colors"
             >
-              무료로 시작하기
+              지금 실행하기 →
             </Link>
             <button className="border border-gray-700 text-gray-300 text-[14px] font-semibold px-6 py-3 rounded-[10px] hover:border-gray-500 hover:text-white transition-colors">
               전문가와 상담하기

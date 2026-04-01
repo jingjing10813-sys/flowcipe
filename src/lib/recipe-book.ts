@@ -1,6 +1,6 @@
 import { Flow } from '@/types/flow'
 
-const STORAGE_KEY = 'flowcipe_recipe_book'
+const STORAGE_KEY = 'runflo_recipe_book'
 
 export function getSavedRecipes(): Flow[] {
   if (typeof window === 'undefined') return []
