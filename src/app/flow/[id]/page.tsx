@@ -1,13 +1,26 @@
+'use client'
+
+import { useEffect, useState } from 'react'
+import { useParams } from 'next/navigation'
 import { getMockFlow } from '@/lib/mock-data'
+import { Flow } from '@/types/flow'
 import { FlowPageClient } from './FlowPageClient'
 
-interface FlowPageProps {
-  params: { id: string }
-}
+export default function FlowPage() {
+  const params = useParams()
+  const id = params.id as string
+  const [flow, setFlow] = useState<Flow | null>(null)
 
-export default function FlowPage({ params }: FlowPageProps) {
-  // TODO: 실제 API 연결 시 Supabase에서 flow 조회
-  const flow = getMockFlow(params.id)
+  useEffect(() => {
+    const stored = sessionStorage.getItem(`flow_${id}`)
+    if (stored) {
+      setFlow(JSON.parse(stored))
+    } else {
+      setFlow(getMockFlow(id))
+    }
+  }, [id])
+
+  if (!flow) return null
 
   return <FlowPageClient flow={flow} />
 }

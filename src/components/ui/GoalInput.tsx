@@ -20,9 +20,22 @@ export function GoalInput() {
     if (!goal.trim() || isLoading) return
 
     setIsLoading(true)
-    // TODO: 실제 API 연결 시 Claude API 호출 + Supabase 저장
-    await new Promise((r) => setTimeout(r, 2000))
-    router.push('/flow/mock-flow-1')
+    try {
+      const res = await fetch('/api/generate-flow', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ goal }),
+      })
+      const data = await res.json()
+      if (!res.ok) throw new Error(data.error)
+
+      // flow 데이터를 sessionStorage에 저장 후 이동
+      sessionStorage.setItem(`flow_${data.flow.id}`, JSON.stringify(data.flow))
+      router.push(`/flow/${data.flow.id}`)
+    } catch (err) {
+      console.error(err)
+      setIsLoading(false)
+    }
   }
 
   if (isLoading) {
