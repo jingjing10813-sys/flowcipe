@@ -4,11 +4,6 @@ import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { LoadingFlow } from './LoadingFlow'
 
-const EXAMPLE_GOALS = [
-  { label: '#코딩 없이 AI로 앱 만들기', value: '코딩 없이 AI로 웹앱을 만들고 싶어' },
-  { label: '#블로그 글을 유튜브 쇼츠로', value: '블로그 글을 유튜브 쇼츠 영상으로 자동 제작하고 싶어' },
-  { label: '#AI 에이전트로 업무 자동화', value: 'AI 에이전트로 이메일·회의록·일정을 자동화하고 싶어' },
-]
 
 interface GoalInputProps {
   value?: string

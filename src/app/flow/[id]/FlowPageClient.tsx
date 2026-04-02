@@ -88,7 +88,6 @@ export function FlowPageClient({ flow }: FlowPageClientProps) {
     completeCurrentStep,
     markStepCopied,
     currentStepIndex,
-    copiedSteps,
     isFlowComplete,
   } = useFlowState(flow.steps.length)
 
