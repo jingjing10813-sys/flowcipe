@@ -28,9 +28,9 @@ export function LoginModal({ onClose }: LoginModalProps) {
         {/* 로고 */}
         <div className="flex items-center gap-2 mb-6">
           <div className="w-7 h-7 bg-gray-900 rounded-[8px] flex items-center justify-center">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="white">
-              <path d="M3 2 Q1 2 1 6 Q1 10 3 10 H13 Q17 10 18 7 Q19 4 17 2 Z"/>
-              <path d="M21 22 Q23 22 23 18 Q23 14 21 14 H11 Q7 14 6 17 Q5 20 7 22 Z"/>
+            <svg width="18" height="18" viewBox="0 0 400 400" fill="white">
+              <path d="M280.49 237.019C272.529 252.941 256.254 263 238.452 263H183.46C178.196 263 173.452 266.175 171.443 271.041L150 323H51L69.5098 285.981C77.4712 270.059 93.7456 260 111.548 260H166.54C171.804 260 176.548 256.825 178.557 251.959L200 200H299L280.49 237.019Z"/>
+              <path d="M330.49 114.019C322.529 129.941 306.254 140 288.452 140H233.46C228.196 140 223.452 143.175 221.443 148.041L200 200H101L119.51 162.981C127.471 147.059 143.746 137 161.548 137H216.54C221.804 137 226.548 133.825 228.557 128.959L250 77H349L330.49 114.019Z"/>
             </svg>
           </div>
           <span className="text-[17px] font-bold text-gray-900 tracking-tight">

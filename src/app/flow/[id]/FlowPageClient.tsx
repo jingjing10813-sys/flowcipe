@@ -1,9 +1,11 @@
 'use client'
 
 import { useRef, useState, useEffect } from 'react'
+import { useSession } from 'next-auth/react'
 import { Flow } from '@/types/flow'
 import { useFlowState } from '@/hooks/useFlowState'
 import { AppLayout } from '@/components/layout/AppLayout'
+import { trackEvent } from '@/lib/analytics'
 import { GoalHeader } from '@/components/flow/GoalHeader'
 import { FlowLine } from '@/components/flow/FlowLine'
 import { SideProgressBar } from '@/components/flow/SideProgressBar'
@@ -82,6 +84,7 @@ function FlowInfoPanel({ flow }: { flow: Flow }) {
 }
 
 export function FlowPageClient({ flow }: FlowPageClientProps) {
+  const { data: session } = useSession()
   const {
     getStepStatus,
     goToStep,
@@ -93,6 +96,9 @@ export function FlowPageClient({ flow }: FlowPageClientProps) {
 
   const flowLineRef = useRef<HTMLDivElement>(null)
   const [showSideBar, setShowSideBar] = useState(false)
+  const trackedSteps = useRef<Set<number>>(new Set())
+
+  const userId = session?.user?.email ?? undefined
 
   const handleStepClick = (index: number) => {
     goToStep(index)
@@ -101,6 +107,52 @@ export function FlowPageClient({ flow }: FlowPageClientProps) {
       if (el) el.scrollIntoView({ behavior: 'smooth', block: 'center' })
     }, 50)
   }
+
+  const handleComplete = () => {
+    const idx = currentStepIndex
+    if (!trackedSteps.current.has(idx)) {
+      trackedSteps.current.add(idx)
+      trackEvent({
+        event: 'step_completed',
+        user_id: userId,
+        user_email: userId,
+        flow_id: flow.id,
+        goal_text: flow.goal,
+        step_index: idx,
+        steps_count: flow.steps.length,
+      })
+    }
+    completeCurrentStep()
+  }
+
+  // flow 완주 감지
+  useEffect(() => {
+    if (isFlowComplete) {
+      trackEvent({
+        event: 'flow_completed',
+        user_id: userId,
+        user_email: userId,
+        flow_id: flow.id,
+        goal_text: flow.goal,
+        steps_count: flow.steps.length,
+      })
+    }
+  }, [isFlowComplete]) // eslint-disable-line react-hooks/exhaustive-deps
+
+  // step 첫 진입 감지
+  useEffect(() => {
+    if (!trackedSteps.current.has(currentStepIndex)) {
+      trackEvent({
+        event: 'step_started',
+        user_id: userId,
+        user_email: userId,
+        flow_id: flow.id,
+        goal_text: flow.goal,
+        step_index: currentStepIndex,
+        steps_count: flow.steps.length,
+      })
+    }
+  }, [currentStepIndex]) // eslint-disable-line react-hooks/exhaustive-deps
 
   useEffect(() => {
     const el = flowLineRef.current
@@ -153,7 +205,7 @@ export function FlowPageClient({ flow }: FlowPageClientProps) {
                       step={step}
                       status={getStepStatus(index)}
                       onCopied={() => markStepCopied(index)}
-                      onComplete={completeCurrentStep}
+                      onComplete={handleComplete}
                     />
 
                     {index < flow.steps.length - 1 && isPromptStep && (

@@ -159,15 +159,14 @@ export default function Home() {
 
           {/* Headline */}
           <h1 className="text-center text-[32px] sm:text-[44px] lg:text-[52px] font-bold text-gray-900 dark:text-white leading-[1.15] tracking-tight mb-3 sm:mb-4">
-            AI, 어디서 시작해야 할지
+            AI 툴은 많은데,
             <br />
-            <span className="text-gray-500">모르겠다면.</span>
+            <span className="text-gray-500">어디서 시작해야 할지 모르겠다면.</span>
           </h1>
           <p className="text-center text-[14px] sm:text-[16px] text-gray-400 leading-relaxed mb-7 sm:mb-10 max-w-[480px] mx-auto">
-            목표만 입력하세요. 다음 행동까지 이어집니다.
-            <br className="hidden sm:block" />
-            <span className="sm:hidden"> </span>
-            무엇을, 어떻게, 어떤 순서로 해야 할지 고민할 필요 없습니다.
+            시작이 막막할 때, Reciflo가 길을 잡아드립니다.
+            <br />
+            목표를 입력하면 단계별 AI 워크플로우가 완성됩니다.
           </p>
 
           {/* Goal Input */}
