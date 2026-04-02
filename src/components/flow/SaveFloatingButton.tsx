@@ -30,7 +30,7 @@ export function SaveFloatingButton({ flow }: SaveFloatingButtonProps) {
   }
 
   return (
-    <div className="fixed bottom-[76px] lg:bottom-8 right-4 lg:right-8 z-50">
+    <div className="fixed bottom-8 right-4 lg:right-8 z-50">
       <button
         onClick={handleSave}
         className={`

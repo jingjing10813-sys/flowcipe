@@ -1,6 +1,7 @@
 'use client'
 
 import Link from 'next/link'
+import { usePathname } from 'next/navigation'
 import { useSession, signOut } from 'next-auth/react'
 import { useState } from 'react'
 import { LoginModal } from '@/components/auth/LoginModal'
@@ -8,17 +9,43 @@ import { LoginModal } from '@/components/auth/LoginModal'
 export function Header() {
   const { data: session } = useSession()
   const [showLogin, setShowLogin] = useState(false)
+  const pathname = usePathname()
+
+  const isActive = (href: string) => {
+    if (href === '/') return pathname === '/'
+    return pathname.startsWith(href)
+  }
 
   return (
     <>
       <header className="fixed top-0 right-0 z-40 h-[60px] bg-white/95 dark:bg-[#1a1a1a]/95 backdrop-blur-sm border-b border-gray-100 dark:border-white/[0.08] lg:left-[72px] left-0">
-        <div className="h-full flex items-center px-6">
+        <div className="h-full flex items-center px-6 gap-4">
           {/* Text Logo */}
           <Link href="/" className="shrink-0">
             <span className="text-[20px] font-bold text-gray-900 dark:text-white tracking-tight">
               Reci<span className="text-gray-400 font-semibold">flo</span>
             </span>
           </Link>
+
+          {/* Mobile Nav */}
+          <nav className="lg:hidden flex items-center gap-1 ml-2">
+            {[
+              { href: '/', label: '탐색' },
+              { href: '/recipe-book', label: '내 레시피' },
+            ].map((item) => (
+              <Link
+                key={item.href}
+                href={item.href}
+                className={`text-[13px] font-semibold px-3 py-1.5 rounded-[8px] transition-colors ${
+                  isActive(item.href)
+                    ? 'text-gray-900 dark:text-white bg-gray-100 dark:bg-white/[0.08]'
+                    : 'text-gray-400 dark:text-[#525252] hover:text-gray-700 dark:hover:text-gray-300'
+                }`}
+              >
+                {item.label}
+              </Link>
+            ))}
+          </nav>
 
           {/* Right */}
           <div className="ml-auto flex items-center gap-2">
