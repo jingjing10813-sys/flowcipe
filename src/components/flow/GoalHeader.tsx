@@ -14,19 +14,32 @@ export function GoalHeader({ flow }: GoalHeaderProps) {
   const diffColor = DIFFICULTY_COLOR[flow.difficulty] ?? 'text-gray-500 bg-gray-100 dark:text-[#a3a3a3] dark:bg-[#232323]'
 
   return (
-    <div className="mb-8 flex items-start justify-between gap-6">
+    <div className="mb-8 sm:flex sm:items-start sm:justify-between sm:gap-6">
       {/* Left: title + desc */}
       <div className="min-w-0">
         <h1 className="text-[28px] sm:text-[34px] font-bold text-gray-900 dark:text-[#f5f5f5] leading-tight tracking-tight mb-2">
           {flow.goal}
         </h1>
-        <p className="text-[14px] text-gray-400 dark:text-[#737373] leading-relaxed max-w-[560px]">
+        <p className="text-[14px] text-gray-400 dark:text-[#737373] leading-relaxed max-w-[560px] mb-3 sm:mb-0">
           {flow.description}
         </p>
+
+        {/* Mobile badges */}
+        <div className="flex items-center gap-2 mt-2 sm:hidden">
+          <span className={`text-[11px] font-bold px-2.5 py-1 rounded-full ${diffColor}`}>
+            {flow.difficulty}
+          </span>
+          <span className="text-[11px] font-semibold px-2.5 py-1 rounded-full bg-gray-100 dark:bg-[#232323] text-gray-500 dark:text-[#a3a3a3]">
+            {flow.estimatedTime}
+          </span>
+          <span className="text-[11px] font-semibold px-2.5 py-1 rounded-full bg-gray-100 dark:bg-[#232323] text-gray-500 dark:text-[#a3a3a3]">
+            {flow.steps.length}단계
+          </span>
+        </div>
       </div>
 
-      {/* Right: meta badges */}
-      <div className="flex items-stretch gap-2 shrink-0">
+      {/* Desktop boxes */}
+      <div className="hidden sm:flex items-start gap-2 shrink-0">
         <div className="flex flex-col items-center justify-center px-4 py-2.5 bg-white dark:bg-[#1a1a1a] border border-gray-100 dark:border-white/[0.08] rounded-[12px] min-w-[64px]">
           <p className="text-[9px] font-bold text-gray-300 dark:text-[#737373] uppercase tracking-widest mb-1.5">난이도</p>
           <span className={`text-[11px] font-bold px-2 py-0.5 rounded-full ${diffColor}`}>

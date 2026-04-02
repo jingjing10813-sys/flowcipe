@@ -175,13 +175,13 @@ export default function Home() {
           </div>
 
           {/* Hashtag chips */}
-          <div className="flex sm:flex-wrap sm:justify-center gap-2 pb-10 sm:pb-14 overflow-x-auto scrollbar-hide px-1">
+          <div className="flex flex-col sm:flex-row sm:flex-wrap sm:justify-center gap-2 pb-10 sm:pb-14 px-1">
             {CHIP_SUGGESTIONS.map((chip) => (
               <button
                 key={chip.label}
                 type="button"
                 onClick={() => setGoal(chip.value)}
-                className={`text-[12.5px] px-3 py-1.5 rounded-full border transition-all
+                className={`text-[12.5px] px-3 py-1.5 rounded-full border transition-all text-left sm:text-center
                   ${goal === chip.value
                     ? 'bg-gray-900 text-white border-gray-900 dark:bg-white dark:text-gray-900 dark:border-white'
                     : 'text-gray-400 bg-white dark:bg-[#232323] border-gray-200 dark:border-white/[0.08] hover:border-gray-400 hover:text-gray-700 dark:hover:border-gray-500 dark:hover:text-gray-200'
