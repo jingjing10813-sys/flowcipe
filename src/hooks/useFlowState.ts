@@ -10,8 +10,8 @@ export function useFlowState(totalSteps: number) {
 
   const getStepStatus = useCallback(
     (index: number): StepStatus => {
-      if (completedSteps.has(index)) return 'done'
       if (index === currentStepIndex) return 'active'
+      if (completedSteps.has(index)) return 'done'
       return 'pending'
     },
     [currentStepIndex, completedSteps]

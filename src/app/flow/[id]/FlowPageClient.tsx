@@ -24,37 +24,39 @@ function FlowInfoPanel({ flow }: { flow: Flow }) {
   }, [])
 
   return (
-    <div className="bg-white rounded-[20px] border border-[#E8E9EC] p-5">
-      <p className="text-[10px] font-bold text-gray-300 uppercase tracking-widest mb-4">Flow 정보</p>
+    <div className="bg-white dark:bg-[#1a1a1a] rounded-[16px] border border-gray-100 dark:border-white/[0.08] p-5">
+      <p className="text-[10px] font-bold text-gray-300 dark:text-[#525252] uppercase tracking-widest mb-4">Flow 정보</p>
 
       <div className="flex flex-col gap-4 mb-5">
         <div>
-          <p className="text-[10px] text-gray-300 uppercase tracking-wide mb-1">예상 시간</p>
-          <p className="text-[14px] font-semibold text-gray-800">{flow.estimatedTime}</p>
+          <p className="text-[10px] text-gray-300 dark:text-[#525252] uppercase tracking-wide mb-1">예상 시간</p>
+          <p className="text-[14px] font-semibold text-gray-800 dark:text-[#f5f5f5]">{flow.estimatedTime}</p>
         </div>
         <div>
-          <p className="text-[10px] text-gray-300 uppercase tracking-wide mb-1">전체 단계</p>
-          <p className="text-[14px] font-semibold text-gray-800">{flow.steps.length}단계</p>
+          <p className="text-[10px] text-gray-300 dark:text-[#525252] uppercase tracking-wide mb-1">전체 단계</p>
+          <p className="text-[14px] font-semibold text-gray-800 dark:text-[#f5f5f5]">{flow.steps.length}단계</p>
         </div>
       </div>
 
-      <div className="border-t border-gray-50 pt-4">
-        <p className="text-[10px] font-bold text-gray-300 uppercase tracking-widest mb-3">사용 툴</p>
+      <div className="border-t border-gray-50 dark:border-white/[0.06] pt-4">
+        <p className="text-[10px] font-bold text-gray-300 dark:text-[#525252] uppercase tracking-widest mb-3">사용 툴</p>
         <div className="flex flex-col gap-3">
           {uniqueTools.map((tool) => (
             <div key={tool.id} className="flex items-center justify-between">
               <div className="flex items-center gap-2">
                 <span className="text-base">{tool.icon}</span>
                 <div>
-                  <p className="text-[13px] font-semibold text-gray-700">{tool.name}</p>
+                  <p className="text-[13px] font-semibold text-gray-700 dark:text-[#f5f5f5]">{tool.name}</p>
                   {tool.model && (
-                    <p className="text-[10px] text-gray-300">{tool.model}</p>
+                    <p className="text-[10px] text-gray-300 dark:text-[#525252]">{tool.model}</p>
                   )}
                 </div>
               </div>
               {tool.free !== undefined && (
                 <span className={`text-[10px] font-semibold px-2 py-0.5 rounded-full shrink-0 ${
-                  tool.free ? 'bg-emerald-50 text-emerald-600' : 'bg-amber-50 text-amber-600'
+                  tool.free
+                    ? 'bg-emerald-50 text-emerald-600 dark:bg-emerald-900/20 dark:text-emerald-400'
+                    : 'bg-amber-50 text-amber-600 dark:bg-amber-900/20 dark:text-amber-400'
                 }`}>
                   {tool.free ? '무료' : '유료'}
                 </span>
@@ -65,10 +67,10 @@ function FlowInfoPanel({ flow }: { flow: Flow }) {
       </div>
 
       {flow.tags.length > 0 && (
-        <div className="border-t border-gray-50 pt-4 mt-4">
+        <div className="border-t border-gray-50 dark:border-white/[0.06] pt-4 mt-4">
           <div className="flex flex-wrap gap-1.5">
             {flow.tags.map((tag) => (
-              <span key={tag} className="text-[10px] font-semibold text-gray-400 bg-gray-100 px-2 py-0.5 rounded-full">
+              <span key={tag} className="text-[10px] font-semibold text-gray-400 dark:text-[#737373] bg-gray-100 dark:bg-[#232323] px-2 py-0.5 rounded-full">
                 {tag}
               </span>
             ))}
@@ -93,6 +95,14 @@ export function FlowPageClient({ flow }: FlowPageClientProps) {
   const flowLineRef = useRef<HTMLDivElement>(null)
   const [showSideBar, setShowSideBar] = useState(false)
 
+  const handleStepClick = (index: number) => {
+    goToStep(index)
+    setTimeout(() => {
+      const el = document.getElementById(`step-${index}`)
+      if (el) el.scrollIntoView({ behavior: 'smooth', block: 'center' })
+    }, 50)
+  }
+
   useEffect(() => {
     const el = flowLineRef.current
     if (!el) return
@@ -106,7 +116,7 @@ export function FlowPageClient({ flow }: FlowPageClientProps) {
 
   return (
     <AppLayout>
-      <div className="px-4 sm:px-6 lg:px-10 py-8">
+      <div className="px-4 sm:px-6 lg:px-10 py-5 sm:py-8">
         <div className="max-w-[1200px] mx-auto">
 
           {/* GoalHeader — full width */}
@@ -117,7 +127,7 @@ export function FlowPageClient({ flow }: FlowPageClientProps) {
             <FlowLine
               steps={flow.steps}
               getStepStatus={getStepStatus}
-              onStepClick={goToStep}
+              onStepClick={handleStepClick}
             />
           </div>
 
@@ -125,8 +135,9 @@ export function FlowPageClient({ flow }: FlowPageClientProps) {
           <SideProgressBar
             steps={flow.steps}
             getStepStatus={getStepStatus}
-            onStepClick={goToStep}
+            onStepClick={handleStepClick}
             visible={showSideBar}
+            estimatedTime={flow.estimatedTime}
           />
 
           {/* Two-column on lg+ */}
@@ -138,7 +149,7 @@ export function FlowPageClient({ flow }: FlowPageClientProps) {
                 const isPromptStep = step.stepType === 'prompt'
 
                 return (
-                  <div key={step.id}>
+                  <div key={step.id} id={`step-${index}`}>
                     <StepCard
                       step={step}
                       status={getStepStatus(index)}
@@ -150,11 +161,7 @@ export function FlowPageClient({ flow }: FlowPageClientProps) {
                       <FlowConnector
                         message={step.connectorMessage}
                         onNext={completeCurrentStep}
-                        isVisible={
-                          currentStepIndex === index &&
-                          copiedSteps.has(index) &&
-                          !isFlowComplete
-                        }
+                        isVisible={currentStepIndex === index && !isFlowComplete}
                       />
                     )}
 
@@ -170,8 +177,8 @@ export function FlowPageClient({ flow }: FlowPageClientProps) {
               <NextActionBlock isVisible={isFlowComplete} flow={flow} />
             </div>
 
-            {/* Right: sticky info panel (desktop only) */}
-            <div className="hidden lg:block">
+            {/* Right: sticky info panel — SideProgressBar 없을 때만 표시 */}
+            <div className={`hidden lg:block transition-opacity duration-200 ${showSideBar ? 'opacity-0 pointer-events-none' : 'opacity-100'}`}>
               <div className="sticky top-[80px]">
                 <FlowInfoPanel flow={flow} />
               </div>

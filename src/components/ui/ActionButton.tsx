@@ -20,13 +20,13 @@ export function ActionButton({ prompt, toolUrl, toolName, label, onCopied }: Act
       onClick={() => handleAction(prompt, toolUrl)}
       disabled={buttonState !== 'idle'}
       className={`
-        w-full py-4 px-6 rounded-[14px] font-semibold text-base
+        w-full py-[18px] px-6 rounded-[14px] font-bold text-[15px]
         transition-all duration-200
         ${buttonState === 'idle'
-          ? 'bg-gray-900 text-white hover:bg-gray-800 active:scale-[0.98]'
+          ? 'bg-gray-900 dark:bg-white text-white dark:text-gray-900 hover:bg-gray-800 dark:hover:bg-gray-100 active:scale-[0.98] shadow-[0_4px_14px_rgba(0,0,0,0.18)] dark:shadow-[0_4px_14px_rgba(255,255,255,0.08)]'
           : buttonState === 'copied'
-          ? 'bg-green-500 text-white'
-          : 'bg-gray-400 text-white'
+          ? 'bg-emerald-500 dark:bg-emerald-400 text-white dark:text-white'
+          : 'bg-gray-300 dark:bg-[#2a2a2a] text-white dark:text-[#525252]'
         }
       `}
     >

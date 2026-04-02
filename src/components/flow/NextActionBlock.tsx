@@ -42,7 +42,7 @@ export function NextActionBlock({ isVisible, flow }: NextActionBlockProps) {
       <p className="text-sm text-gray-400 mb-6">
         모든 단계를 완료했습니다.
         <br />
-        레시피북에 저장하면 나중에 다시 꺼내볼 수 있어요.
+        레시피에 저장하면 나중에 다시 꺼내 실행할 수 있어요.
       </p>
 
       <div className="flex flex-col gap-3">
@@ -63,10 +63,10 @@ export function NextActionBlock({ isVisible, flow }: NextActionBlockProps) {
               <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
                 <polyline points="20,6 9,17 4,12" />
               </svg>
-              레시피북에 저장됨
+              레시피에 저장됨
             </span>
           ) : (
-            '나의 레시피북에 저장하기 →'
+            '내 레시피에 저장하기 →'
           )}
         </button>
 
@@ -78,7 +78,7 @@ export function NextActionBlock({ isVisible, flow }: NextActionBlockProps) {
             onClick={() => router.push('/recipe-book')}
             className="w-full py-3.5 rounded-[12px] font-semibold text-sm border border-gray-700 text-gray-300 hover:border-gray-500 hover:text-white transition-all"
           >
-            나의 레시피북 보기
+            내 레시피 보기
           </motion.button>
         )}
 

@@ -50,26 +50,20 @@ export function GoalInput({ value: externalValue, onChange: externalOnChange }: 
   }
 
   if (isLoading) {
-    return (
-      <div className="rounded-[20px] bg-white p-6 shadow-sm">
-        <p className="text-sm font-semibold text-gray-900 mb-1">Flow를 생성하는 중...</p>
-        <p className="text-xs text-gray-400 mb-4">
-          태스크 분해 엔진이 실행 가능한 워크플로우로 나누고 있습니다
-        </p>
-        <LoadingFlow />
-      </div>
-    )
+    return <LoadingFlow />
   }
 
   return (
-    <form onSubmit={handleSubmit} className="flex flex-col gap-4">
-      <div className="relative">
+    <form onSubmit={handleSubmit} className="flex flex-col gap-3">
+      {/* 텍스트필드 컨테이너 — focus 시 테두리 강조 */}
+      <div className="bg-white dark:bg-[#1a1a1a] rounded-[18px] border-2 border-gray-200 dark:border-white/[0.12] focus-within:border-gray-900 dark:focus-within:border-white/60 transition-colors shadow-[0_2px_16px_rgba(0,0,0,0.07)] dark:shadow-[0_2px_16px_rgba(0,0,0,0.3)]">
         <textarea
           value={goal}
           onChange={(e) => setGoal(e.target.value)}
-          placeholder="무엇을 만들고 싶으세요?"
+          placeholder="무엇을 만들고 싶으세요? (예: 블로그 글을 유튜브 쇼츠로 자동 제작하고 싶어)"
           rows={3}
-          className="w-full resize-none rounded-[16px] border border-gray-200 bg-white px-5 py-4 text-base text-gray-900 placeholder:text-gray-300 focus:outline-none focus:ring-2 focus:ring-gray-900 transition-all"
+          autoFocus
+          className="w-full resize-none bg-transparent px-5 pt-4 pb-4 text-[15px] text-gray-900 dark:text-white placeholder:text-gray-400 dark:placeholder:text-[#525252] focus:outline-none leading-relaxed"
           onKeyDown={(e) => {
             if (e.key === 'Enter' && !e.shiftKey) {
               e.preventDefault()
@@ -83,33 +77,16 @@ export function GoalInput({ value: externalValue, onChange: externalOnChange }: 
         type="submit"
         disabled={!goal.trim()}
         className={`
-          w-full py-4 rounded-[14px] font-semibold text-base
-          transition-all duration-200
+          w-full py-[18px] rounded-[14px] font-bold text-[15px] transition-all duration-200
           ${goal.trim()
-            ? 'bg-gray-900 text-white hover:bg-gray-800 active:scale-[0.98]'
-            : 'bg-gray-100 text-gray-300 cursor-not-allowed'
+            ? 'bg-gray-900 dark:bg-white text-white dark:text-gray-900 hover:bg-gray-800 dark:hover:bg-gray-100 active:scale-[0.98] shadow-[0_4px_14px_rgba(0,0,0,0.2)] dark:shadow-[0_4px_14px_rgba(255,255,255,0.08)]'
+            : 'bg-gray-200 dark:bg-[#232323] text-gray-400 dark:text-[#525252] cursor-not-allowed'
           }
         `}
       >
         지금 실행하기 →
       </button>
 
-      {/* Example Goals */}
-      <div>
-        <p className="text-xs text-gray-400 mb-2 font-medium">예시</p>
-        <div className="flex flex-wrap gap-2">
-          {EXAMPLE_GOALS.map((example) => (
-            <button
-              key={example.label}
-              type="button"
-              onClick={() => setGoal(example.value)}
-              className="text-sm text-gray-500 px-3 py-1.5 rounded-full bg-white border border-gray-200 hover:border-gray-400 hover:text-gray-900 transition-all"
-            >
-              {example.label}
-            </button>
-          ))}
-        </div>
-      </div>
     </form>
   )
 }
