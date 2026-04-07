@@ -30,6 +30,15 @@ export function StepCard({ step, status, onCopied, onComplete }: StepCardProps) 
   const isPending = status === 'pending'
   const isCommand = step.stepType === 'command'
 
+
+  const ctaLabel = (() => {
+    if (step.promptType === 'config') return '설정 복사하기'
+    if (step.order === 1) return '복사하고 바로 시작하기'
+    if (step.order === 2) return '이어서 완성하기'
+    if (step.order >= 3) return '완성하고 끝내기'
+    return `${step.tool.name}에서 바로 시작하기 →`
+  })()
+
   const promptLabel = PROMPT_TYPE_LABELS[step.promptType] ?? 'PROMPT'
   const promptColorClass = PROMPT_TYPE_COLORS[step.promptType] ?? 'bg-gray-50 border-gray-100 text-gray-400 dark:bg-[#232323] dark:border-white/[0.08] dark:text-[#737373]'
 
@@ -142,7 +151,7 @@ export function StepCard({ step, status, onCopied, onComplete }: StepCardProps) 
                   prompt={copyText}
                   toolUrl={step.tool.url}
                   toolName={step.tool.name}
-                  label={step.promptType === 'config' ? '설정 복사하기' : `${step.tool.name}에서 바로 시작하기 →`}
+                  label={ctaLabel}
                   onCopied={onCopied}
                 />
                 <p className="text-center text-[12px] text-gray-400 dark:text-[#737373] font-medium mt-2.5">
@@ -188,7 +197,7 @@ export function StepCard({ step, status, onCopied, onComplete }: StepCardProps) 
                 onClick={onComplete}
                 className="w-full py-3.5 px-6 rounded-[14px] font-semibold text-[14px] bg-gray-100 dark:bg-[#232323] text-gray-600 dark:text-[#a3a3a3] hover:bg-gray-200 dark:hover:bg-[#2a2a2a] active:scale-[0.98] transition-all"
               >
-                입력 완료 → 다음 단계
+                완료하고 계속하기
               </button>
             )}
           </>

@@ -2,13 +2,22 @@
 
 import { motion, AnimatePresence } from 'framer-motion'
 
+const NEXT_STEP_INDUCTION: Record<number, string> = {
+  2: '여기까지 왔으면 전체의 75%가 끝난 거예요.',
+  3: '완성까지 딱 1분 남았어요.',
+}
+
 interface FlowConnectorProps {
   message: string
   onNext: () => void
   isVisible: boolean
+  nextStepOrder: number
+  totalSteps: number
 }
 
-export function FlowConnector({ message, onNext, isVisible }: FlowConnectorProps) {
+export function FlowConnector({ message, onNext, isVisible, nextStepOrder, totalSteps }: FlowConnectorProps) {
+  const inductionKey = nextStepOrder <= 2 ? nextStepOrder : nextStepOrder === totalSteps ? 3 : null
+  const inductionLine = inductionKey ? NEXT_STEP_INDUCTION[inductionKey] : null
   return (
     <AnimatePresence>
       {isVisible && (
@@ -25,7 +34,7 @@ export function FlowConnector({ message, onNext, isVisible }: FlowConnectorProps
             <div>
               <p className="text-[11.5px] font-semibold text-emerald-500 dark:text-emerald-400 mb-0.5">{message}</p>
               <p className="text-[13px] text-gray-400 dark:text-[#737373]">
-                결과를 복사해서 다음 단계에 붙여넣으세요
+                {inductionLine ?? '결과를 복사해서 다음 단계에 붙여넣으세요'}
               </p>
             </div>
             <button
