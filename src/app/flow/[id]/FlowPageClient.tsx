@@ -204,7 +204,6 @@ export function FlowPageClient({ flow }: FlowPageClientProps) {
                     <StepCard
                       step={step}
                       status={getStepStatus(index)}
-                      stepCount={flow.steps.length}
                       onCopied={() => markStepCopied(index)}
                       onComplete={handleComplete}
                     />
