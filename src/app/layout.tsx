@@ -22,7 +22,7 @@ export default function RootLayout({
         <SessionProvider>{children}</SessionProvider>
         <Script
           id="clarity"
-          strategy="afterInteractive"
+          strategy="lazyOnload"
           dangerouslySetInnerHTML={{
             __html: `
               (function(c,l,a,r,i,t,y){
