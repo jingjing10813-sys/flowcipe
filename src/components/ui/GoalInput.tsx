@@ -170,7 +170,7 @@ export function GoalInput({ value: externalValue, onChange: externalOnChange }: 
           className={`
             w-full py-[18px] rounded-[14px] font-bold text-[15px] transition-all duration-200
             ${goal.trim()
-              ? 'btn-wave text-zinc-900 active:scale-[0.98] shadow-[0_4px_14px_rgba(0,0,0,0.15)]'
+              ? 'bg-gray-900 dark:bg-zinc-200 text-white dark:text-zinc-900 hover:bg-gray-700 dark:hover:bg-zinc-300 active:scale-[0.98] shadow-[0_4px_14px_rgba(0,0,0,0.15)]'
               : 'bg-gray-200 dark:bg-[#232323] text-gray-400 dark:text-[#525252] cursor-not-allowed'
             }
           `}
