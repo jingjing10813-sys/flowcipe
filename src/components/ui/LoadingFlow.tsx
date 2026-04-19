@@ -116,7 +116,7 @@ export function LoadingFlow({ onComplete, done }: LoadingFlowProps) {
                     isDone
                       ? 'text-gray-400 dark:text-gray-500'
                       : isActive
-                      ? 'text-blue-500 dark:text-blue-400'
+                      ? 'text-gray-500 dark:text-gray-400'
                       : 'text-gray-300 dark:text-[#525252]'
                   }`}>
                     {isDone ? '완료' : isActive ? step.active : '대기중'}
