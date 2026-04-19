@@ -46,7 +46,7 @@ export function FlowLine({ steps, getStepStatus, onStepClick }: FlowLineProps) {
         />
         {/* 진행 채움 선 */}
         <div
-          className="absolute top-1/2 -translate-y-1/2 h-[2px] bg-gray-900 dark:bg-white rounded-full transition-all duration-700 ease-out"
+          className="absolute top-1/2 -translate-y-1/2 h-[2px] bg-gray-900 dark:bg-zinc-400 rounded-full transition-all duration-700 ease-out"
           style={{
             left: `${50 / N}%`,
             width: `calc((100% - ${100 / N}%) * ${Math.min(progressFraction, 1)})`,
@@ -65,8 +65,8 @@ export function FlowLine({ steps, getStepStatus, onStepClick }: FlowLineProps) {
                 onClick={() => onStepClick(index)}
                 className={`
                   w-8 h-8 rounded-full flex items-center justify-center transition-all duration-300 shrink-0 cursor-pointer hover:scale-110
-                  ${isActive  ? 'bg-gray-900 dark:bg-white ring-4 ring-gray-100 dark:ring-white/10 shadow-sm' : ''}
-                  ${isDone    ? 'bg-gray-900 dark:bg-white' : ''}
+                  ${isActive  ? 'bg-gray-900 dark:bg-zinc-300 ring-4 ring-gray-100 dark:ring-zinc-700 shadow-sm' : ''}
+                  ${isDone    ? 'bg-gray-900 dark:bg-zinc-400' : ''}
                   ${isPending ? 'bg-white dark:bg-[#1a1a1a] border-2 border-gray-200 dark:border-white/[0.12]' : ''}
                 `}
               >
@@ -76,9 +76,7 @@ export function FlowLine({ steps, getStepStatus, onStepClick }: FlowLineProps) {
                   </svg>
                 )}
                 {isActive && (
-                  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" className="text-white dark:text-gray-900">
-                    <polyline points="13,2 3,14 12,14 11,22 21,10 12,10 13,2" />
-                  </svg>
+                  <span className="text-[11px] font-bold text-white dark:text-gray-900">{index + 1}</span>
                 )}
                 {isPending && (
                   <span className="text-[11px] font-bold text-gray-300 dark:text-[#525252]">{index + 1}</span>

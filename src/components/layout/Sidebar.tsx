@@ -2,7 +2,7 @@
 
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { FeedbackModal } from '@/components/feedback/FeedbackModal'
 
 const NAV_ITEMS = [
@@ -31,6 +31,18 @@ const NAV_ITEMS = [
 export function Sidebar() {
   const pathname = usePathname()
   const [showFeedback, setShowFeedback] = useState(false)
+  const [isDark, setIsDark] = useState(false)
+
+  useEffect(() => {
+    setIsDark(document.documentElement.classList.contains('dark'))
+  }, [])
+
+  const toggleTheme = () => {
+    const next = !isDark
+    setIsDark(next)
+    document.documentElement.classList.toggle('dark', next)
+    localStorage.setItem('theme', next ? 'dark' : 'light')
+  }
 
   const isActive = (href: string) => {
     if (href === '/') return pathname === '/'
@@ -39,15 +51,15 @@ export function Sidebar() {
 
   return (
     <>
-    <aside className="hidden lg:flex fixed left-0 top-0 z-50 w-[72px] h-screen bg-white dark:bg-[#1a1a1a] border-r border-gray-100 dark:border-white/[0.08] flex-col items-center">
+    <aside className="hidden lg:flex fixed left-0 top-0 z-50 w-[72px] h-screen bg-white dark:bg-[#18181b] border-r border-gray-100 dark:border-white/[0.07] flex-col items-center">
 
       {/* Symbol Logo */}
       <Link
         href="/"
         className="w-full h-[60px] flex items-center justify-center shrink-0 border-b border-gray-100 dark:border-white/[0.08]"
       >
-        <div className="w-[40px] h-[40px] bg-gray-900 rounded-[12px] flex items-center justify-center">
-          <svg width="26" height="26" viewBox="0 0 400 400" fill="white">
+        <div className="w-[40px] h-[40px] bg-gray-900 dark:bg-white rounded-[12px] flex items-center justify-center">
+          <svg width="26" height="26" viewBox="0 0 400 400" fill="currentColor" className="text-white dark:text-gray-900">
             <path d="M280.49 237.019C272.529 252.941 256.254 263 238.452 263H183.46C178.196 263 173.452 266.175 171.443 271.041L150 323H51L69.5098 285.981C77.4712 270.059 93.7456 260 111.548 260H166.54C171.804 260 176.548 256.825 178.557 251.959L200 200H299L280.49 237.019Z"/>
             <path d="M330.49 114.019C322.529 129.941 306.254 140 288.452 140H233.46C228.196 140 223.452 143.175 221.443 148.041L200 200H101L119.51 162.981C127.471 147.059 143.746 137 161.548 137H216.54C221.804 137 226.548 133.825 228.557 128.959L250 77H349L330.49 114.019Z"/>
           </svg>
@@ -63,7 +75,7 @@ export function Sidebar() {
             className={`
               w-full flex flex-col items-center gap-1 py-2.5 px-1 rounded-[10px] transition-all
               ${isActive(item.href)
-                ? 'bg-gray-900 text-white dark:bg-white dark:text-gray-900'
+                ? 'bg-gray-900 text-white dark:bg-zinc-700 dark:text-zinc-100'
                 : 'text-gray-400 hover:bg-gray-50 hover:text-gray-300 dark:hover:bg-[#232323]'
               }
             `}
@@ -76,9 +88,26 @@ export function Sidebar() {
 
       {/* Bottom Items */}
       <div className="mt-auto flex flex-col items-center gap-1 pb-4 w-full px-2 border-t border-gray-100 dark:border-white/[0.08] pt-3">
+        {/* Dark mode toggle */}
+        <button
+          onClick={toggleTheme}
+          className="w-full flex flex-col items-center gap-1 py-2.5 px-1 rounded-[10px] text-gray-400 hover:bg-gray-50 dark:hover:bg-[#27272a] hover:text-gray-700 dark:hover:text-gray-300 transition-all"
+        >
+          {isDark ? (
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8">
+              <circle cx="12" cy="12" r="5"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/>
+            </svg>
+          ) : (
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8">
+              <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
+            </svg>
+          )}
+          <span className="text-[10px] font-semibold leading-none">{isDark ? '라이트' : '다크'}</span>
+        </button>
+
         <button
           onClick={() => setShowFeedback(true)}
-          className="w-full flex flex-col items-center gap-1 py-2.5 px-1 rounded-[10px] text-gray-400 hover:bg-gray-50 dark:hover:bg-[#232323] hover:text-gray-700 dark:hover:text-gray-300 transition-all"
+          className="w-full flex flex-col items-center gap-1 py-2.5 px-1 rounded-[10px] text-gray-400 hover:bg-gray-50 dark:hover:bg-[#27272a] hover:text-gray-700 dark:hover:text-gray-300 transition-all"
         >
           <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8">
             <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" />

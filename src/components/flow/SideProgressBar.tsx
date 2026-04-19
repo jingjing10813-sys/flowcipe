@@ -53,8 +53,8 @@ export function SideProgressBar({ steps, getStepStatus, onStepClick, visible, es
                       <button
                         onClick={() => onStepClick(index)}
                         className={`shrink-0 rounded-full flex items-center justify-center transition-all duration-200 cursor-pointer hover:scale-110
-                          ${isActive  ? 'w-6 h-6 bg-gray-900 dark:bg-white ring-2 ring-gray-100 dark:ring-white/10' : ''}
-                          ${isDone    ? 'w-6 h-6 bg-gray-900 dark:bg-white' : ''}
+                          ${isActive  ? 'w-6 h-6 bg-gray-900 dark:bg-zinc-300 ring-2 ring-gray-100 dark:ring-zinc-700' : ''}
+                          ${isDone    ? 'w-6 h-6 bg-gray-900 dark:bg-zinc-400' : ''}
                           ${isPending ? 'w-6 h-6 bg-white dark:bg-[#232323] border-2 border-gray-200 dark:border-white/[0.12]' : ''}
                         `}
                       >
@@ -64,7 +64,7 @@ export function SideProgressBar({ steps, getStepStatus, onStepClick, visible, es
                           </svg>
                         )}
                         {isActive && (
-                          <span className="text-xs leading-none">{step.tool.icon}</span>
+                          <span className="text-[9px] font-bold text-white dark:text-gray-900">{index + 1}</span>
                         )}
                         {isPending && (
                           <span className="text-[9px] font-bold text-gray-400 dark:text-[#525252]">{index + 1}</span>
@@ -73,7 +73,7 @@ export function SideProgressBar({ steps, getStepStatus, onStepClick, visible, es
 
                       {!isLast && (
                         <div className={`w-[2px] h-8 rounded-full my-0.5 transition-all duration-300
-                          ${isDone ? 'bg-gray-800 dark:bg-white' : 'bg-gray-100 dark:bg-white/[0.08]'}
+                          ${isDone ? 'bg-gray-800 dark:bg-zinc-500' : 'bg-gray-100 dark:bg-zinc-800'}
                         `} />
                       )}
                     </div>

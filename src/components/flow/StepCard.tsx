@@ -88,11 +88,11 @@ export function StepCard({ step, status, onCopied, onComplete }: StepCardProps) 
           {/* Right: 뱃지 2줄 */}
           <div className="flex flex-col items-end gap-1.5 shrink-0">
             <div className={`flex items-center gap-1.5 px-2.5 py-1 rounded-full border transition-colors
-              ${isActive ? 'bg-gray-900 border-gray-900 dark:bg-white dark:border-white' : 'bg-gray-50 border-gray-100 dark:bg-[#232323] dark:border-white/[0.08]'}
+              ${isActive ? 'bg-gray-900 border-gray-900 dark:bg-zinc-700 dark:border-zinc-600' : 'bg-gray-50 border-gray-100 dark:bg-[#232323] dark:border-white/[0.08]'}
             `}>
               <span className="text-sm leading-none">{step.tool.icon}</span>
               <span className={`text-[11px] font-semibold transition-colors
-                ${isActive ? 'text-white dark:text-gray-900' : 'text-gray-600 dark:text-[#a3a3a3]'}
+                ${isActive ? 'text-white dark:text-zinc-100' : 'text-gray-600 dark:text-zinc-300'}
               `}>
                 {step.tool.name}
               </span>

@@ -72,7 +72,7 @@ export function RecipeCard({ flow, onRemove }: RecipeCardProps) {
       <div className="flex gap-2">
         <button
           onClick={() => router.push(`/flow/${flow.id}`)}
-          className="flex-1 py-2.5 bg-gray-900 dark:bg-white text-white dark:text-gray-900 text-[13px] font-semibold rounded-[10px] hover:bg-gray-800 dark:hover:bg-gray-100 active:scale-[0.98] transition-all"
+          className="flex-1 py-2.5 bg-gray-900 dark:bg-zinc-200 text-white dark:text-zinc-900 text-[13px] font-semibold rounded-[10px] hover:bg-gray-800 dark:hover:bg-zinc-300 active:scale-[0.98] transition-all"
         >
           다시 실행하기 →
         </button>
