@@ -25,11 +25,11 @@ export function GoalInput({ value: externalValue, onChange: externalOnChange }: 
   const { data: session } = useSession()
   const [internalGoal, setInternalGoal] = useState('')
   const [isLoading, setIsLoading] = useState(false)
+  const [apiDone, setApiDone] = useState(false)
   const [showLogin, setShowLogin] = useState(false)
   const [isFocused, setIsFocused] = useState(false)
   const [typedText, setTypedText] = useState('')
   const pendingNavRef = useRef<string | null>(null)
-  const animDoneRef = useRef(false)
   const phraseIdx = useRef(0)
   const charIdx = useRef(0)
   const isDeleting = useRef(false)
@@ -115,11 +115,8 @@ export function GoalInput({ value: externalValue, onChange: externalOnChange }: 
       })
 
       sessionStorage.setItem(`flow_${data.flow.id}`, JSON.stringify(data.flow))
-      if (animDoneRef.current) {
-        router.push(`/flow/${data.flow.id}`)
-      } else {
-        pendingNavRef.current = `/flow/${data.flow.id}`
-      }
+      pendingNavRef.current = `/flow/${data.flow.id}`
+      setApiDone(true)
     } catch (err) {
       console.error(err)
       setIsLoading(false)
@@ -127,11 +124,10 @@ export function GoalInput({ value: externalValue, onChange: externalOnChange }: 
   }
 
   const handleAnimComplete = () => {
-    animDoneRef.current = true
     if (pendingNavRef.current) router.push(pendingNavRef.current)
   }
 
-  if (isLoading) return <LoadingFlow onComplete={handleAnimComplete} />
+  if (isLoading) return <LoadingFlow done={apiDone} onComplete={handleAnimComplete} />
 
   const showTyping = !goal && !isFocused
 

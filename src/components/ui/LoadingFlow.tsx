@@ -11,34 +11,48 @@ const STEPS = [
 
 interface LoadingFlowProps {
   onComplete?: () => void
+  done?: boolean
 }
 
-export function LoadingFlow({ onComplete }: LoadingFlowProps) {
+export function LoadingFlow({ onComplete, done }: LoadingFlowProps) {
   const [currentStep, setCurrentStep] = useState(0)
   const onCompleteRef = useRef(onComplete)
-  const calledRef = useRef(false)
+  const doneRef = useRef(done ?? false)
   onCompleteRef.current = onComplete
+  doneRef.current = done ?? false
 
   useEffect(() => {
-    const timings = [700, 1000, 600, 500]
+    const timings = [700, 1000, 600]
     let idx = 0
+    let cancelled = false
+
     const advance = () => {
       if (idx < timings.length) {
         setTimeout(() => {
-          setCurrentStep(s => {
-            const next = s + 1
-            if (next >= STEPS.length && !calledRef.current) {
-              calledRef.current = true
-              setTimeout(() => onCompleteRef.current?.(), 300)
-            }
-            return next
-          })
+          if (cancelled) return
+          setCurrentStep(s => s + 1)
           idx++
           advance()
         }, timings[idx])
+      } else {
+        // step 4 활성화 — done 될 때까지 폴링
+        const waitForDone = () => {
+          if (cancelled) return
+          if (doneRef.current) {
+            setTimeout(() => {
+              if (cancelled) return
+              setCurrentStep(STEPS.length)
+              setTimeout(() => onCompleteRef.current?.(), 400)
+            }, 800)
+          } else {
+            setTimeout(waitForDone, 100)
+          }
+        }
+        waitForDone()
       }
     }
     advance()
+    return () => { cancelled = true }
   }, [])
 
   return (
