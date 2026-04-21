@@ -1,5 +1,6 @@
 import { GoogleGenAI } from '@google/genai'
 import { NextRequest, NextResponse } from 'next/server'
+import { getServerSession } from 'next-auth'
 import { Flow } from '@/types/flow'
 
 const genAI = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY! })
@@ -66,6 +67,11 @@ stepType 규칙 (핵심):
 
 export async function POST(req: NextRequest) {
   try {
+    const session = await getServerSession()
+    if (!session?.user?.email) {
+      return NextResponse.json({ error: '로그인이 필요합니다' }, { status: 401 })
+    }
+
     const { goal } = await req.json()
 
     if (!goal?.trim()) {
