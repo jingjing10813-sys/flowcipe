@@ -1,89 +1,29 @@
 'use client'
 
-import { useRef, useState, useEffect } from 'react'
+import { useRef, useEffect } from 'react'
+import { useRouter } from 'next/navigation'
 import { useSession } from 'next-auth/react'
 import { Flow } from '@/types/flow'
 import { useFlowState } from '@/hooks/useFlowState'
 import { AppLayout } from '@/components/layout/AppLayout'
 import { trackEvent } from '@/lib/analytics'
-import { GoalHeader } from '@/components/flow/GoalHeader'
-import { FlowLine } from '@/components/flow/FlowLine'
-import { SideProgressBar } from '@/components/flow/SideProgressBar'
 import { StepCard } from '@/components/flow/StepCard'
-import { FlowConnector } from '@/components/flow/FlowConnector'
+import { StepSidebar } from '@/components/flow/StepSidebar'
 import { NextActionBlock } from '@/components/flow/NextActionBlock'
 import { SaveFloatingButton } from '@/components/flow/SaveFloatingButton'
+
+const DIFFICULTY_COLOR: Record<string, string> = {
+  '입문': 'text-emerald-600 bg-emerald-50 dark:text-emerald-400 dark:bg-emerald-900/30',
+  '중급': 'text-amber-600 bg-amber-50 dark:text-amber-400 dark:bg-amber-900/30',
+  '고급': 'text-red-500 bg-red-50 dark:text-red-400 dark:bg-red-900/30',
+}
 
 interface FlowPageClientProps {
   flow: Flow
 }
 
-function FlowInfoPanel({ flow }: { flow: Flow }) {
-  // 중복 없는 툴 목록
-  const uniqueTools = flow.steps.reduce<Flow['steps'][0]['tool'][]>((acc, step) => {
-    if (!acc.find((t) => t.id === step.tool.id)) acc.push(step.tool)
-    return acc
-  }, [])
-
-  return (
-    <div className="bg-white dark:bg-[#1a1a1a] rounded-[16px] border border-gray-100 dark:border-white/[0.08] p-5">
-      <p className="text-[10px] font-bold text-gray-300 dark:text-[#525252] uppercase tracking-widest mb-4">Flow 정보</p>
-
-      <div className="flex flex-col gap-4 mb-5">
-        <div>
-          <p className="text-[10px] text-gray-300 dark:text-[#525252] uppercase tracking-wide mb-1">예상 시간</p>
-          <p className="text-[14px] font-semibold text-gray-800 dark:text-[#f5f5f5]">{flow.estimatedTime}</p>
-        </div>
-        <div>
-          <p className="text-[10px] text-gray-300 dark:text-[#525252] uppercase tracking-wide mb-1">전체 단계</p>
-          <p className="text-[14px] font-semibold text-gray-800 dark:text-[#f5f5f5]">{flow.steps.length}단계</p>
-        </div>
-      </div>
-
-      <div className="border-t border-gray-50 dark:border-white/[0.06] pt-4">
-        <p className="text-[10px] font-bold text-gray-300 dark:text-[#525252] uppercase tracking-widest mb-3">사용 툴</p>
-        <div className="flex flex-col gap-3">
-          {uniqueTools.map((tool) => (
-            <div key={tool.id} className="flex items-center justify-between">
-              <div className="flex items-center gap-2">
-                <span className="text-base">{tool.icon}</span>
-                <div>
-                  <p className="text-[13px] font-semibold text-gray-700 dark:text-[#f5f5f5]">{tool.name}</p>
-                  {tool.model && (
-                    <p className="text-[10px] text-gray-300 dark:text-[#525252]">{tool.model}</p>
-                  )}
-                </div>
-              </div>
-              {tool.free !== undefined && (
-                <span className={`text-[10px] font-semibold px-2 py-0.5 rounded-full shrink-0 ${
-                  tool.free
-                    ? 'bg-emerald-50 text-emerald-600 dark:bg-emerald-900/20 dark:text-emerald-400'
-                    : 'bg-amber-50 text-amber-600 dark:bg-amber-900/20 dark:text-amber-400'
-                }`}>
-                  {tool.free ? '무료' : '유료'}
-                </span>
-              )}
-            </div>
-          ))}
-        </div>
-      </div>
-
-      {flow.tags.length > 0 && (
-        <div className="border-t border-gray-50 dark:border-white/[0.06] pt-4 mt-4">
-          <div className="flex flex-wrap gap-1.5">
-            {flow.tags.map((tag) => (
-              <span key={tag} className="text-[10px] font-semibold text-gray-400 dark:text-[#737373] bg-gray-100 dark:bg-[#232323] px-2 py-0.5 rounded-full">
-                {tag}
-              </span>
-            ))}
-          </div>
-        </div>
-      )}
-    </div>
-  )
-}
-
 export function FlowPageClient({ flow }: FlowPageClientProps) {
+  const router = useRouter()
   const { data: session } = useSession()
   const {
     getStepStatus,
@@ -94,18 +34,13 @@ export function FlowPageClient({ flow }: FlowPageClientProps) {
     isFlowComplete,
   } = useFlowState(flow.steps.length)
 
-  const flowLineRef = useRef<HTMLDivElement>(null)
-  const [showSideBar, setShowSideBar] = useState(false)
   const trackedSteps = useRef<Set<number>>(new Set())
-
   const userId = session?.user?.email ?? undefined
+  const diffColor = DIFFICULTY_COLOR[flow.difficulty] ?? 'text-gray-500 bg-gray-100'
+  const activeStep = flow.steps[currentStepIndex]
 
   const handleStepClick = (index: number) => {
     goToStep(index)
-    setTimeout(() => {
-      const el = document.getElementById(`step-${index}`)
-      if (el) el.scrollIntoView({ behavior: 'smooth', block: 'center' })
-    }, 50)
   }
 
   const handleComplete = () => {
@@ -125,7 +60,6 @@ export function FlowPageClient({ flow }: FlowPageClientProps) {
     completeCurrentStep()
   }
 
-  // flow 완주 감지
   useEffect(() => {
     if (isFlowComplete) {
       trackEvent({
@@ -139,7 +73,6 @@ export function FlowPageClient({ flow }: FlowPageClientProps) {
     }
   }, [isFlowComplete]) // eslint-disable-line react-hooks/exhaustive-deps
 
-  // step 첫 진입 감지
   useEffect(() => {
     if (!trackedSteps.current.has(currentStepIndex)) {
       trackEvent({
@@ -154,93 +87,80 @@ export function FlowPageClient({ flow }: FlowPageClientProps) {
     }
   }, [currentStepIndex]) // eslint-disable-line react-hooks/exhaustive-deps
 
-  useEffect(() => {
-    const el = flowLineRef.current
-    if (!el) return
-    const observer = new IntersectionObserver(
-      ([entry]) => setShowSideBar(!entry.isIntersecting),
-      { threshold: 0.1 }
-    )
-    observer.observe(el)
-    return () => observer.disconnect()
-  }, [])
-
   return (
     <AppLayout>
-      <div className="px-4 sm:px-6 lg:px-10 py-5 sm:py-8">
-        <div className="max-w-[1200px] mx-auto">
+      {/* Sticky header */}
+      <div className="sticky top-0 z-40 bg-white dark:bg-[#0f0f0f] border-b border-gray-100 dark:border-white/[0.07]">
+        <div className="max-w-[1100px] mx-auto px-4 sm:px-6 h-14 flex items-center gap-3">
+          <button
+            onClick={() => router.push('/')}
+            className="flex items-center gap-1.5 text-[13px] font-medium text-gray-400 dark:text-[#737373] hover:text-gray-700 dark:hover:text-gray-300 transition-colors shrink-0"
+          >
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+              <path d="M19 12H5M12 5l-7 7 7 7" />
+            </svg>
+            홈
+          </button>
+          <div className="w-px h-4 bg-gray-200 dark:bg-white/[0.1] shrink-0" />
+          <h1 className="text-[14px] font-semibold text-gray-900 dark:text-white truncate flex-1">
+            {flow.goal}
+          </h1>
+          <div className="hidden sm:flex items-center gap-2 shrink-0">
+            <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full ${diffColor}`}>
+              {flow.difficulty}
+            </span>
+            <span className="text-[11px] text-gray-400 dark:text-[#737373]">⏱ {flow.estimatedTime}</span>
+            <span className="text-[11px] text-gray-400 dark:text-[#737373]">{flow.steps.length}단계</span>
+          </div>
+        </div>
+      </div>
 
-          {/* GoalHeader — full width */}
-          <GoalHeader flow={flow} />
+      {/* Body */}
+      <div className="max-w-[1100px] mx-auto px-4 sm:px-6 py-6 sm:py-8">
+        <div className="lg:grid lg:grid-cols-[1fr_272px] lg:gap-8">
 
-          {/* FlowLine — full width, no box */}
-          <div ref={flowLineRef}>
-            <FlowLine
-              steps={flow.steps}
-              getStepStatus={getStepStatus}
-              onStepClick={handleStepClick}
-            />
+          {/* Left: active step */}
+          <div>
+            {!isFlowComplete ? (
+              <StepCard
+                step={activeStep}
+                status="active"
+                onCopied={() => {
+                  markStepCopied(currentStepIndex)
+                  if (currentStepIndex === flow.steps.length - 1) handleComplete()
+                }}
+                onComplete={handleComplete}
+              />
+            ) : (
+              <NextActionBlock isVisible={true} flow={flow} />
+            )}
+
+            {/* Mobile: next button */}
+            {!isFlowComplete && currentStepIndex < flow.steps.length - 1 && (
+              <button
+                onClick={completeCurrentStep}
+                className="lg:hidden mt-4 w-full py-3.5 rounded-[14px] bg-gray-900 dark:bg-zinc-200 text-white dark:text-zinc-900 text-[14px] font-semibold active:scale-[0.98] transition-all"
+              >
+                다음 단계 →
+              </button>
+            )}
           </div>
 
-          {/* 사이드 프로그레스바 — FlowLine 스크롤 아웃 시 등장 */}
-          <SideProgressBar
-            steps={flow.steps}
-            getStepStatus={getStepStatus}
-            onStepClick={handleStepClick}
-            visible={showSideBar}
-            estimatedTime={flow.estimatedTime}
-          />
-
-          {/* Two-column on lg+ */}
-          <div className="lg:grid lg:grid-cols-[1fr_280px] lg:gap-8 xl:gap-12">
-
-            {/* Left: step cards */}
-            <div className="flex flex-col gap-4">
-              {flow.steps.map((step, index) => {
-                const isPromptStep = step.stepType === 'prompt'
-
-                return (
-                  <div key={step.id} id={`step-${index}`}>
-                    <StepCard
-                      step={step}
-                      status={getStepStatus(index)}
-                      onCopied={() => {
-                        markStepCopied(index)
-                        if (index === flow.steps.length - 1) handleComplete()
-                      }}
-                      onComplete={handleComplete}
-                    />
-
-                    {index < flow.steps.length - 1 && isPromptStep && (
-                      <FlowConnector
-                        message={step.connectorMessage}
-                        onNext={completeCurrentStep}
-                        isVisible={currentStepIndex === index && !isFlowComplete}
-                        nextStepOrder={index + 2}
-                        totalSteps={flow.steps.length}
-                      />
-                    )}
-
-                    {index < flow.steps.length - 1 && !isPromptStep && (
-                      <div className="flex justify-center py-1">
-                        <div className="w-px h-6 bg-gray-100" />
-                      </div>
-                    )}
-                  </div>
-                )
-              })}
-
-              <NextActionBlock isVisible={isFlowComplete} flow={flow} />
+          {/* Right: sidebar */}
+          <div className="hidden lg:block">
+            <div className="sticky top-[80px]">
+              <StepSidebar
+                steps={flow.steps}
+                currentStepIndex={currentStepIndex}
+                getStepStatus={getStepStatus}
+                onStepClick={handleStepClick}
+                onNext={completeCurrentStep}
+                estimatedTime={flow.estimatedTime}
+                isFlowComplete={isFlowComplete}
+              />
             </div>
-
-            {/* Right: sticky info panel — SideProgressBar 없을 때만 표시 */}
-            <div className={`hidden lg:block transition-opacity duration-200 ${showSideBar ? 'opacity-0 pointer-events-none' : 'opacity-100'}`}>
-              <div className="sticky top-[80px]">
-                <FlowInfoPanel flow={flow} />
-              </div>
-            </div>
-
           </div>
+
         </div>
       </div>
 
