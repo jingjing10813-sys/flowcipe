@@ -1,5 +1,6 @@
 'use client'
 
+import { useState } from 'react'
 import { Step, StepStatus } from '@/types/flow'
 import { ActionButton } from '@/components/ui/ActionButton'
 import { ToolIcon } from '@/components/ui/ToolIcon'
@@ -21,6 +22,24 @@ const PROMPT_TYPE_LABELS: Record<string, string> = {
 export function StepCard({ step, status, onCopied, onComplete }: StepCardProps) {
   const isActive = status === 'active'
   const isCommand = step.stepType === 'command'
+  const [commandCopied, setCommandCopied] = useState(false)
+
+  const handleCommandCopy = async () => {
+    const text = step.commandGuide ?? ''
+    try { await navigator.clipboard.writeText(text) } catch {
+      const el = document.createElement('textarea')
+      el.value = text
+      el.style.position = 'fixed'
+      el.style.opacity = '0'
+      document.body.appendChild(el)
+      el.select()
+      document.execCommand('copy')
+      document.body.removeChild(el)
+    }
+    setCommandCopied(true)
+    onCopied?.()
+    setTimeout(() => setCommandCopied(false), 2000)
+  }
 
   const ctaLabel = (() => {
     if (step.promptType === 'config') return '설정 복사하기'
@@ -132,14 +151,26 @@ export function StepCard({ step, status, onCopied, onComplete }: StepCardProps) 
                 </p>
               </div>
             )}
-            <div className={`mb-5 rounded-xl p-4 ${isActive ? 'bg-gray-900 dark:bg-[#232323]' : 'bg-gray-100 dark:bg-[#232323]/60'}`}>
-              <p className={`text-[10px] font-bold uppercase tracking-widest mb-2 ${isActive ? 'text-gray-500 dark:text-[#737373]' : 'text-gray-400 dark:text-[#525252]'}`}>
+            <button
+              onClick={isActive ? handleCommandCopy : undefined}
+              className={`w-full mb-5 rounded-xl p-4 text-left transition-all ${
+                isActive
+                  ? 'bg-gray-900 dark:bg-[#232323] hover:opacity-80 active:scale-[0.99] cursor-pointer'
+                  : 'bg-gray-100 dark:bg-[#232323]/60 cursor-default'
+              }`}
+            >
+              <p className={`text-[10px] font-bold uppercase tracking-widest mb-2 flex items-center justify-between ${isActive ? 'text-gray-500 dark:text-[#737373]' : 'text-gray-400 dark:text-[#525252]'}`}>
                 이렇게 입력하세요
+                {isActive && (
+                  <span className={`text-[10px] font-semibold normal-case tracking-normal ${commandCopied ? 'text-emerald-400' : 'text-gray-600 dark:text-[#525252]'}`}>
+                    {commandCopied ? '복사됨 ✓' : '눌러서 복사'}
+                  </span>
+                )}
               </p>
               <p className={`text-[15px] font-medium leading-relaxed ${isActive ? 'text-white dark:text-[#f5f5f5]' : 'text-gray-500 dark:text-[#737373]'}`}>
                 &ldquo;{step.commandGuide}&rdquo;
               </p>
-            </div>
+            </button>
             {isActive && (
               <div className="mb-5">
                 <button
