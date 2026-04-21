@@ -30,6 +30,7 @@ export function FlowPageClient({ flow }: FlowPageClientProps) {
     goToStep,
     completeCurrentStep,
     markStepCopied,
+    copiedSteps,
     currentStepIndex,
     isFlowComplete,
   } = useFlowState(flow.steps.length)
@@ -157,6 +158,7 @@ export function FlowPageClient({ flow }: FlowPageClientProps) {
                 onNext={completeCurrentStep}
                 estimatedTime={flow.estimatedTime}
                 isFlowComplete={isFlowComplete}
+                isCurrentStepCopied={copiedSteps.has(currentStepIndex)}
               />
             </div>
           </div>
