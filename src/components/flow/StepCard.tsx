@@ -23,6 +23,7 @@ export function StepCard({ step, status, onCopied, onComplete }: StepCardProps) 
   const isActive = status === 'active'
   const isCommand = step.stepType === 'command'
   const [commandCopied, setCommandCopied] = useState(false)
+  const [hasCopied, setHasCopied] = useState(false)
 
   const handleCommandCopy = async () => {
     const text = step.commandGuide ?? ''
@@ -128,10 +129,10 @@ export function StepCard({ step, status, onCopied, onComplete }: StepCardProps) 
                   toolUrl={step.tool.url}
                   toolName={step.tool.name}
                   label={ctaLabel}
-                  onCopied={onCopied}
+                  onCopied={() => { setHasCopied(true); onCopied?.() }}
                 />
-                <p className="text-center text-[12px] text-gray-400 dark:text-[#737373] mt-2">
-                  버튼을 누르면 프롬프트가 자동으로 복사돼요
+                <p className="text-center text-[12px] mt-2 transition-colors duration-300 font-medium text-gray-500 dark:text-[#737373]">
+                  {hasCopied ? '여기까지 왔으면 전체의 75%가 끝난 거예요! 🎉' : '버튼을 누르면 프롬프트가 자동으로 복사돼요'}
                 </p>
               </div>
             )}
