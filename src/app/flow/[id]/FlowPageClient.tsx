@@ -136,11 +136,16 @@ export function FlowPageClient({ flow }: FlowPageClientProps) {
               <NextActionBlock isVisible={true} flow={flow} />
             )}
 
-            {/* Mobile: next button */}
+            {/* Next button — 복사 후 활성화 */}
             {!isFlowComplete && currentStepIndex < flow.steps.length - 1 && (
               <button
                 onClick={completeCurrentStep}
-                className="lg:hidden mt-4 w-full py-3.5 rounded-[14px] bg-gray-900 dark:bg-zinc-200 text-white dark:text-zinc-900 text-[14px] font-semibold active:scale-[0.98] transition-all"
+                className={`mt-3 w-full py-3.5 rounded-[14px] text-[14px] font-semibold active:scale-[0.98] transition-all ${
+                  copiedSteps.has(currentStepIndex)
+                    ? 'bg-gray-900 dark:bg-zinc-200 text-white dark:text-zinc-900 hover:bg-gray-800 dark:hover:bg-zinc-300'
+                    : 'bg-gray-100 dark:bg-[#232323] text-gray-300 dark:text-[#525252] cursor-not-allowed'
+                }`}
+                disabled={!copiedSteps.has(currentStepIndex)}
               >
                 다음 단계 →
               </button>
@@ -152,13 +157,9 @@ export function FlowPageClient({ flow }: FlowPageClientProps) {
             <div className="sticky top-[80px]">
               <StepSidebar
                 steps={flow.steps}
-                currentStepIndex={currentStepIndex}
                 getStepStatus={getStepStatus}
                 onStepClick={handleStepClick}
-                onNext={completeCurrentStep}
                 estimatedTime={flow.estimatedTime}
-                isFlowComplete={isFlowComplete}
-                isCurrentStepCopied={copiedSteps.has(currentStepIndex)}
               />
             </div>
           </div>

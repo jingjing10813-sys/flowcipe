@@ -7,24 +7,15 @@ interface StepSidebarProps {
   steps: Step[]
   getStepStatus: (index: number) => StepStatus
   onStepClick: (index: number) => void
-  onNext: () => void
   estimatedTime: string
-  isFlowComplete: boolean
-  currentStepIndex: number
-  isCurrentStepCopied: boolean
 }
 
 export function StepSidebar({
   steps,
   getStepStatus,
   onStepClick,
-  onNext,
   estimatedTime,
-  isFlowComplete,
-  currentStepIndex,
-  isCurrentStepCopied,
 }: StepSidebarProps) {
-  const isLastStep = currentStepIndex === steps.length - 1
 
   return (
     <div className="bg-white dark:bg-[#1a1a1a] rounded-2xl border border-gray-100 dark:border-white/[0.08]">
@@ -98,18 +89,6 @@ export function StepSidebar({
           <span>⏱ {estimatedTime}</span>
           <span>{steps.length}단계</span>
         </div>
-        {!isFlowComplete && !isLastStep && (
-          <button
-            onClick={onNext}
-            className={`w-full py-3 rounded-[10px] text-[13px] font-semibold transition-all active:scale-[0.98] ${
-              isCurrentStepCopied
-                ? 'bg-gray-900 dark:bg-zinc-200 text-white dark:text-zinc-900 hover:bg-gray-800 dark:hover:bg-zinc-300'
-                : 'bg-gray-100 dark:bg-[#232323] text-gray-400 dark:text-[#525252]'
-            }`}
-          >
-            다음 단계 →
-          </button>
-        )}
       </div>
     </div>
   )
