@@ -37,19 +37,24 @@ export function StepCard({ step, status, onCopied, onComplete }: StepCardProps) 
   return (
     <div className="bg-white dark:bg-[#1a1a1a] rounded-2xl border border-gray-100 dark:border-white/[0.08] shadow-[0_2px_16px_rgba(0,0,0,0.06)] dark:shadow-[0_2px_16px_rgba(0,0,0,0.3)] overflow-hidden">
 
-      {/* Header bar */}
-      <div className="flex items-center justify-between px-6 py-4 border-b border-gray-50 dark:border-white/[0.06]">
-        <div className="flex items-center gap-2">
-          <span className="text-[10px] font-bold text-gray-400 dark:text-[#525252] uppercase tracking-widest">
-            STEP {String(step.order).padStart(2, '0')}
-          </span>
-          {isCommand && isActive && (
-            <span className="text-[10px] font-semibold text-blue-500 bg-blue-50 dark:text-blue-400 dark:bg-blue-900/20 px-2 py-0.5 rounded-full">
-              세션 계속
+      {/* Header + Title grouped */}
+      <div className="flex items-start justify-between px-6 pt-6 pb-5">
+        <div className="min-w-0 flex-1 mr-4">
+          <div className="flex items-center gap-2 mb-1.5">
+            <span className="text-[10px] font-bold text-gray-400 dark:text-[#525252] uppercase tracking-widest">
+              STEP {String(step.order).padStart(2, '0')}
             </span>
-          )}
+            {isCommand && isActive && (
+              <span className="text-[10px] font-semibold text-blue-500 bg-blue-50 dark:text-blue-400 dark:bg-blue-900/20 px-2 py-0.5 rounded-full">
+                세션 계속
+              </span>
+            )}
+          </div>
+          <h2 className="text-[22px] sm:text-[26px] font-bold text-gray-900 dark:text-[#f5f5f5] leading-snug tracking-tight">
+            {step.title}
+          </h2>
         </div>
-        <div className="flex flex-col items-end gap-0.5">
+        <div className="flex flex-col items-end gap-0.5 shrink-0">
           <span className="flex items-center gap-1.5 text-[12px] font-semibold px-3 py-1 rounded-full border bg-gray-100 dark:bg-[#232323] border-gray-200 dark:border-white/[0.08] text-gray-500 dark:text-zinc-400">
             <span className="text-[13px] leading-none">{step.tool.icon}</span>
             {step.tool.name}
@@ -63,12 +68,7 @@ export function StepCard({ step, status, onCopied, onComplete }: StepCardProps) 
       </div>
 
       {/* Body */}
-      <div className="px-6 py-6">
-
-        {/* Title */}
-        <h2 className="text-[22px] sm:text-[26px] font-bold text-gray-900 dark:text-[#f5f5f5] leading-snug tracking-tight mb-5">
-          {step.title}
-        </h2>
+      <div className="px-6 pb-6">
 
         {/* IN guide */}
         <div className="flex items-start gap-3 mb-5 px-4 py-3 bg-gray-50 dark:bg-[#232323] rounded-xl">
