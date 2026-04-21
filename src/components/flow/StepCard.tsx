@@ -55,11 +55,7 @@ export function StepCard({ step, status, onCopied, onComplete }: StepCardProps) 
             {step.tool.name}
           </span>
           {step.tool.free !== undefined && (
-            <span className={`text-[10px] font-medium ${
-              step.tool.free
-                ? 'text-emerald-500 dark:text-emerald-400'
-                : 'text-amber-500 dark:text-amber-400'
-            }`}>
+            <span className="text-[10px] font-medium text-gray-700 dark:text-[#d4d4d4]">
               {step.tool.free ? '무료' : '유료'}{step.tool.freeLimit ? ` · ${step.tool.freeLimit}` : ''}
             </span>
           )}
