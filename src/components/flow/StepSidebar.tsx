@@ -103,7 +103,7 @@ export function StepSidebar({
             onClick={onNext}
             className={`w-full py-3 rounded-[10px] text-[13px] font-semibold transition-all active:scale-[0.98] ${
               isCurrentStepCopied
-                ? 'btn-wave text-white'
+                ? 'bg-gray-900 dark:bg-zinc-200 text-white dark:text-zinc-900 hover:bg-gray-800 dark:hover:bg-zinc-300'
                 : 'bg-gray-100 dark:bg-[#232323] text-gray-400 dark:text-[#525252]'
             }`}
           >
