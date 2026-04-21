@@ -49,22 +49,18 @@ export function StepCard({ step, status, onCopied, onComplete }: StepCardProps) 
             </span>
           )}
         </div>
-        <div className="flex items-center gap-2">
-          <span className={`flex items-center gap-1.5 text-[12px] font-semibold px-3 py-1 rounded-full border ${
-            isActive
-              ? 'bg-gray-900 dark:bg-zinc-700 border-gray-900 dark:border-zinc-600 text-white dark:text-zinc-100'
-              : 'bg-gray-50 dark:bg-[#232323] border-gray-100 dark:border-white/[0.08] text-gray-600 dark:text-zinc-300'
-          }`}>
+        <div className="flex flex-col items-end gap-0.5">
+          <span className="flex items-center gap-1.5 text-[12px] font-semibold px-3 py-1 rounded-full border bg-gray-100 dark:bg-[#232323] border-gray-200 dark:border-white/[0.08] text-gray-500 dark:text-zinc-400">
             <span className="text-[13px] leading-none">{step.tool.icon}</span>
             {step.tool.name}
           </span>
           {step.tool.free !== undefined && (
-            <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full ${
+            <span className={`text-[10px] font-medium ${
               step.tool.free
-                ? 'bg-emerald-50 text-emerald-600 dark:bg-emerald-900/20 dark:text-emerald-400'
-                : 'bg-amber-50 text-amber-600 dark:bg-amber-900/20 dark:text-amber-400'
+                ? 'text-emerald-500 dark:text-emerald-400'
+                : 'text-amber-500 dark:text-amber-400'
             }`}>
-              {step.tool.free ? '무료' : '유료'}
+              {step.tool.free ? '무료' : '유료'}{step.tool.freeLimit ? ` · ${step.tool.freeLimit}` : ''}
             </span>
           )}
         </div>
