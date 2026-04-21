@@ -1,6 +1,7 @@
 'use client'
 
 import { Step, StepStatus } from '@/types/flow'
+import { ToolIcon } from '@/components/ui/ToolIcon'
 
 interface StepSidebarProps {
   steps: Step[]
@@ -79,10 +80,11 @@ export function StepSidebar({
                   }`}>
                     {step.title}
                   </p>
-                  <p className={`text-[11px] mt-0.5 ${
+                  <p className={`flex items-center gap-1 text-[11px] mt-0.5 ${
                     isActive ? 'text-gray-500 dark:text-[#a3a3a3]' : 'text-gray-200 dark:text-[#404040]'
                   }`}>
-                    {step.tool.icon} {step.tool.name}
+                    <ToolIcon name={step.tool.name} size={11} />
+                    {step.tool.name}
                   </p>
                 </div>
               </button>

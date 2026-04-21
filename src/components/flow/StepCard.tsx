@@ -2,6 +2,7 @@
 
 import { Step, StepStatus } from '@/types/flow'
 import { ActionButton } from '@/components/ui/ActionButton'
+import { ToolIcon } from '@/components/ui/ToolIcon'
 
 interface StepCardProps {
   step: Step
@@ -56,7 +57,7 @@ export function StepCard({ step, status, onCopied, onComplete }: StepCardProps) 
         </div>
         <div className="flex flex-col items-end gap-0.5 shrink-0">
           <span className="flex items-center gap-1.5 text-[12px] font-semibold px-3 py-1 rounded-full border bg-gray-100 dark:bg-[#232323] border-gray-200 dark:border-white/[0.08] text-gray-500 dark:text-zinc-400">
-            <span className="text-[13px] leading-none">{step.tool.icon}</span>
+            <ToolIcon name={step.tool.name} size={13} />
             {step.tool.name}
           </span>
           {step.tool.free !== undefined && (
