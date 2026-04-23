@@ -1,7 +1,17 @@
 import { GoogleGenAI } from '@google/genai'
 import { NextRequest, NextResponse } from 'next/server'
 import { getServerSession } from 'next-auth'
+import { createClient } from '@supabase/supabase-js'
 import { Flow } from '@/types/flow'
+
+const supabase = createClient(
+  process.env.NEXT_PUBLIC_SUPABASE_URL!,
+  process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
+)
+
+function normalizeGoal(goal: string) {
+  return goal.trim().toLowerCase().replace(/\s+/g, ' ')
+}
 
 const genAI = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY! })
 
@@ -183,6 +193,17 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: '목표를 입력해주세요' }, { status: 400 })
     }
 
+    // 캐시 확인 — 동일 goal이면 기존 flow 반환
+    const goalKey = normalizeGoal(goal)
+    const { data: cached } = await supabase
+      .from('flows')
+      .select('flow')
+      .eq('goal_key', goalKey)
+      .maybeSingle()
+    if (cached?.flow) {
+      return NextResponse.json({ flow: cached.flow })
+    }
+
     const result = await genAI.models.generateContent({
       model: 'gemini-2.5-flash',
       contents: goal,
@@ -211,6 +232,9 @@ export async function POST(req: NextRequest) {
           ? Object.values(step.prompt as Record<string, string>).join('\n')
           : undefined,
     }))
+
+    // 생성된 flow 캐싱
+    supabase.from('flows').upsert({ id: flow.id, flow, goal_key: goalKey }).then(() => {})
 
     return NextResponse.json({ flow })
   } catch (err) {
