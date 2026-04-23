@@ -96,6 +96,16 @@ export function FlowPageClient({ flow }: FlowPageClientProps) {
           <h1 className="text-[14px] font-semibold text-gray-900 dark:text-white truncate flex-1">
             {flow.goal}
           </h1>
+          <button
+            onClick={() => router.push('/recipe-book')}
+            className="lg:hidden flex items-center justify-center w-8 h-8 text-gray-400 dark:text-[#737373] hover:text-gray-700 dark:hover:text-gray-300 transition-colors shrink-0"
+            aria-label="내 레시피"
+          >
+            <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8">
+              <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20" />
+              <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z" />
+            </svg>
+          </button>
           <div className="hidden sm:flex items-center gap-2 shrink-0">
             <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full ${diffColor}`}>
               {flow.difficulty}

@@ -1,7 +1,6 @@
 'use client'
 
 import Link from 'next/link'
-import { usePathname } from 'next/navigation'
 import { useSession, signOut } from 'next-auth/react'
 import { useState } from 'react'
 import { LoginModal } from '@/components/auth/LoginModal'
@@ -9,12 +8,6 @@ import { LoginModal } from '@/components/auth/LoginModal'
 export function Header() {
   const { data: session } = useSession()
   const [showLogin, setShowLogin] = useState(false)
-  const pathname = usePathname()
-
-  const isActive = (href: string) => {
-    if (href === '/') return pathname === '/'
-    return pathname.startsWith(href)
-  }
 
   return (
     <>
@@ -28,24 +21,6 @@ export function Header() {
           </Link>
 
           {/* Mobile Nav */}
-          <nav className="lg:hidden flex items-center gap-1 ml-2">
-            {[
-              { href: '/', label: '탐색' },
-              { href: '/recipe-book', label: '내 레시피' },
-            ].map((item) => (
-              <Link
-                key={item.href}
-                href={item.href}
-                className={`text-[13px] font-semibold px-3 py-1.5 rounded-[8px] transition-colors ${
-                  isActive(item.href)
-                    ? 'text-gray-900 dark:text-white bg-gray-100 dark:bg-white/[0.08]'
-                    : 'text-gray-400 dark:text-[#525252] hover:text-gray-700 dark:hover:text-gray-300'
-                }`}
-              >
-                {item.label}
-              </Link>
-            ))}
-          </nav>
 
           {/* Right */}
           <div className="ml-auto flex items-center gap-2">
