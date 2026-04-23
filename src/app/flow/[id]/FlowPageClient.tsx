@@ -182,7 +182,7 @@ export function FlowPageClient({ flow }: FlowPageClientProps) {
                 onNext={completeCurrentStep}
                 canGoNext={copiedSteps.has(currentStepIndex)}
                 isFlowComplete={isFlowComplete}
-                currentStepIndex={currentStepIndex}
+
                 completedCount={completedSteps.size}
               />
             </div>
