@@ -85,7 +85,7 @@ export function LoadingFlow({ onComplete, done }: LoadingFlowProps) {
                     isDone
                       ? 'bg-gray-900 dark:bg-zinc-400'
                       : isActive
-                      ? 'bg-white dark:bg-[#1a1a1a] border-2 border-gray-900 dark:border-white'
+                      ? 'logo-shimmer overflow-hidden bg-white dark:bg-[#1a1a1a] border-2 border-gray-900 dark:border-white animate-pulse'
                       : 'bg-white dark:bg-[#1a1a1a] border-2 border-gray-200 dark:border-white/[0.12]'
                   }`}>
                     {isDone && (
@@ -108,7 +108,7 @@ export function LoadingFlow({ onComplete, done }: LoadingFlowProps) {
                 </div>
 
                 {/* 텍스트 */}
-                <div className={`pb-${isLast ? '0' : '0'} flex flex-col justify-center`} style={{ paddingBottom: isLast ? 0 : '2rem' }}>
+                <div className={`flex flex-col justify-center`} style={{ paddingBottom: isLast ? 0 : '2rem' }}>
                   <p className={`text-[13px] font-semibold transition-colors ${
                     isPending ? 'text-gray-300 dark:text-[#525252]' : 'text-gray-900 dark:text-white'
                   }`}>{step.label}</p>

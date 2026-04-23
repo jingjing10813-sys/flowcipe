@@ -1,12 +1,12 @@
 'use client'
 
-import { useRef, useEffect } from 'react'
+import { useRef, useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { useSession } from 'next-auth/react'
 import { Flow } from '@/types/flow'
 import { useFlowState } from '@/hooks/useFlowState'
 import { AppLayout } from '@/components/layout/AppLayout'
-import { trackEvent } from '@/lib/analytics'
+import { identifyUser, trackFlowStarted, trackStepCompleted, trackFlowCompleted } from '@/lib/analytics'
 import { StepCard } from '@/components/flow/StepCard'
 import { StepSidebar } from '@/components/flow/StepSidebar'
 import { NextActionBlock } from '@/components/flow/NextActionBlock'
@@ -33,60 +33,50 @@ export function FlowPageClient({ flow }: FlowPageClientProps) {
     copiedSteps,
     currentStepIndex,
     isFlowComplete,
+    resetFlow,
+    completedSteps,
   } = useFlowState(flow.steps.length)
 
   const trackedSteps = useRef<Set<number>>(new Set())
+  const flowStartTracked = useRef(false)
   const userId = session?.user?.email ?? undefined
   const diffColor = DIFFICULTY_COLOR[flow.difficulty] ?? 'text-gray-500 bg-gray-100'
   const activeStep = flow.steps[currentStepIndex]
+  const [viewingIndex, setViewingIndex] = useState<number | null>(null)
 
   const handleStepClick = (index: number) => {
-    goToStep(index)
+    if (isFlowComplete) {
+      setViewingIndex(prev => prev === index ? null : index)
+    } else {
+      goToStep(index)
+    }
   }
 
   const handleComplete = () => {
     const idx = currentStepIndex
     if (!trackedSteps.current.has(idx)) {
       trackedSteps.current.add(idx)
-      trackEvent({
-        event: 'step_completed',
-        user_id: userId,
-        user_email: userId,
-        flow_id: flow.id,
-        goal_text: flow.goal,
-        step_index: idx,
-        steps_count: flow.steps.length,
-      })
+      trackStepCompleted(flow.id, flow.steps[idx].order, flow.steps[idx].title)
     }
     completeCurrentStep()
   }
 
   useEffect(() => {
+    if (userId) identifyUser(userId)
+  }, [userId])
+
+  useEffect(() => {
     if (isFlowComplete) {
-      trackEvent({
-        event: 'flow_completed',
-        user_id: userId,
-        user_email: userId,
-        flow_id: flow.id,
-        goal_text: flow.goal,
-        steps_count: flow.steps.length,
-      })
+      trackFlowCompleted(flow.id, flow.goal, flow.steps.length)
     }
   }, [isFlowComplete]) // eslint-disable-line react-hooks/exhaustive-deps
 
   useEffect(() => {
-    if (!trackedSteps.current.has(currentStepIndex)) {
-      trackEvent({
-        event: 'step_started',
-        user_id: userId,
-        user_email: userId,
-        flow_id: flow.id,
-        goal_text: flow.goal,
-        step_index: currentStepIndex,
-        steps_count: flow.steps.length,
-      })
+    if (!flowStartTracked.current) {
+      flowStartTracked.current = true
+      trackFlowStarted(flow.id, flow.goal)
     }
-  }, [currentStepIndex]) // eslint-disable-line react-hooks/exhaustive-deps
+  }, []) // eslint-disable-line react-hooks/exhaustive-deps
 
   return (
     <AppLayout>
@@ -114,6 +104,13 @@ export function FlowPageClient({ flow }: FlowPageClientProps) {
             <span className="text-[11px] text-gray-400 dark:text-[#737373]">{flow.steps.length}단계</span>
           </div>
         </div>
+        {/* Progress bar */}
+        <div className="h-[3px] bg-gray-100 dark:bg-white/[0.06] w-full">
+          <div
+            className="h-full bg-gray-900 dark:bg-zinc-200 transition-all duration-500 ease-out"
+            style={{ width: `${isFlowComplete ? 100 : (currentStepIndex / flow.steps.length) * 100}%` }}
+          />
+        </div>
       </div>
 
       {/* Body */}
@@ -124,6 +121,7 @@ export function FlowPageClient({ flow }: FlowPageClientProps) {
           <div>
             {!isFlowComplete ? (
               <StepCard
+                key={activeStep.id}
                 step={activeStep}
                 status="active"
                 onCopied={() => {
@@ -133,23 +131,34 @@ export function FlowPageClient({ flow }: FlowPageClientProps) {
                 onComplete={handleComplete}
               />
             ) : (
-              <NextActionBlock isVisible={true} flow={flow} />
+              <>
+                <NextActionBlock isVisible={true} flow={flow} onRestart={() => { resetFlow(); setViewingIndex(null) }} />
+                {viewingIndex !== null && (
+                  <div className="mt-4">
+                    <div className="flex items-center justify-between px-1 mb-2">
+                      <span className="text-[11px] font-bold text-gray-400 dark:text-[#525252] uppercase tracking-wider">
+                        STEP {String(viewingIndex + 1).padStart(2, '0')} 다시 보기
+                      </span>
+                      <button
+                        onClick={() => setViewingIndex(null)}
+                        className="flex items-center justify-center w-6 h-6 rounded-full text-gray-400 dark:text-[#525252] hover:text-gray-700 dark:hover:text-gray-300 hover:bg-gray-100 dark:hover:bg-white/[0.07] transition-all"
+                      >
+                        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+                          <path d="M18 6L6 18M6 6l12 12" />
+                        </svg>
+                      </button>
+                    </div>
+                    <StepCard
+                      key={flow.steps[viewingIndex].id}
+                      step={flow.steps[viewingIndex]}
+                      status="done"
+                    />
+                  </div>
+                )}
+              </>
             )}
 
             {/* Next button — 복사 후 활성화 */}
-            {!isFlowComplete && currentStepIndex < flow.steps.length - 1 && (
-              <button
-                onClick={completeCurrentStep}
-                className={`mt-3 w-full py-3.5 rounded-[14px] text-[14px] font-semibold active:scale-[0.98] transition-all ${
-                  copiedSteps.has(currentStepIndex)
-                    ? 'bg-gray-900 dark:bg-zinc-200 text-white dark:text-zinc-900 hover:bg-gray-800 dark:hover:bg-zinc-300'
-                    : 'bg-gray-100 dark:bg-[#232323] text-gray-300 dark:text-[#525252] cursor-not-allowed'
-                }`}
-                disabled={!copiedSteps.has(currentStepIndex)}
-              >
-                다음 단계 →
-              </button>
-            )}
           </div>
 
           {/* Right: sidebar */}
@@ -160,6 +169,11 @@ export function FlowPageClient({ flow }: FlowPageClientProps) {
                 getStepStatus={getStepStatus}
                 onStepClick={handleStepClick}
                 estimatedTime={flow.estimatedTime}
+                onNext={completeCurrentStep}
+                canGoNext={copiedSteps.has(currentStepIndex)}
+                isFlowComplete={isFlowComplete}
+                currentStepIndex={currentStepIndex}
+                completedCount={completedSteps.size}
               />
             </div>
           </div>

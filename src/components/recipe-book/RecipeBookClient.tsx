@@ -2,25 +2,31 @@
 
 import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
+import { useSession } from 'next-auth/react'
 import { Flow } from '@/types/flow'
 import { getSavedRecipes } from '@/lib/recipe-book'
 import { RecipeCard } from './RecipeCard'
 
 export function RecipeBookClient() {
   const router = useRouter()
+  const { data: session } = useSession()
   const [recipes, setRecipes] = useState<Flow[]>([])
   const [mounted, setMounted] = useState(false)
 
   useEffect(() => {
-    setRecipes(getSavedRecipes())
-    setMounted(true)
-  }, [])
+    const email = session?.user?.email
+    if (!email) return
+    getSavedRecipes(email).then((data) => {
+      setRecipes(data)
+      setMounted(true)
+    })
+  }, [session?.user?.email])
+
+  if (!mounted) return null
 
   const handleRemove = (id: string) => {
     setRecipes((prev) => prev.filter((r) => r.id !== id))
   }
-
-  if (!mounted) return null
 
   return (
     <div>
@@ -45,7 +51,6 @@ export function RecipeBookClient() {
         </div>
       ) : (
         <>
-          {/* 헤더 카운트 */}
           <div className="flex items-center gap-2 mb-5">
             <span className="text-[13px] text-gray-400 dark:text-[#737373] font-medium">
               저장된 레시피 <span className="text-gray-900 dark:text-[#f5f5f5] font-bold">{recipes.length}개</span>
@@ -54,7 +59,7 @@ export function RecipeBookClient() {
 
           <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-4">
             {recipes.map((flow) => (
-              <RecipeCard key={flow.id} flow={flow} onRemove={handleRemove} />
+              <RecipeCard key={flow.id} flow={flow} onRemove={handleRemove} userEmail={session?.user?.email ?? ''} />
             ))}
           </div>
         </>

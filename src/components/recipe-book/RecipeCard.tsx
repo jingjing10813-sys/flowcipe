@@ -14,20 +14,21 @@ const DIFFICULTY_COLORS: Record<string, { bg: string; text: string }> = {
 interface RecipeCardProps {
   flow: Flow
   onRemove: (id: string) => void
+  userEmail: string
 }
 
-export function RecipeCard({ flow, onRemove }: RecipeCardProps) {
+export function RecipeCard({ flow, onRemove, userEmail }: RecipeCardProps) {
   const router = useRouter()
   const [confirmDelete, setConfirmDelete] = useState(false)
   const diff = DIFFICULTY_COLORS[flow.difficulty] ?? { bg: 'bg-gray-100 dark:bg-[#232323]', text: 'text-gray-500 dark:text-[#a3a3a3]' }
 
-  const handleDelete = () => {
+  const handleDelete = async () => {
     if (!confirmDelete) {
       setConfirmDelete(true)
       setTimeout(() => setConfirmDelete(false), 2500)
       return
     }
-    removeRecipe(flow.id)
+    await removeRecipe(userEmail, flow.id)
     onRemove(flow.id)
   }
 
@@ -55,7 +56,7 @@ export function RecipeCard({ flow, onRemove }: RecipeCardProps) {
       <div className="flex flex-wrap gap-1.5 mb-4">
         {flow.steps.map((step) => (
           <span key={step.id} className="flex items-center gap-1.5 text-[12px] text-gray-500 dark:text-[#a3a3a3] bg-gray-50 dark:bg-[#232323] border border-gray-100 dark:border-white/[0.06] px-2.5 py-1 rounded-full">
-            <span className="text-[13px] leading-none">{step.tool.icon}</span>
+            <span className="text-[10px] font-bold text-gray-300 dark:text-[#525252]">{String(step.order).padStart(2, '0')}</span>
             {step.title}
           </span>
         ))}

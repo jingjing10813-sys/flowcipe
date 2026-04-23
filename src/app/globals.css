@@ -161,3 +161,73 @@ html.dark .btn-wave {
 .animate-slot-up {
   animation: slot-up 0.35s cubic-bezier(0.16, 1, 0.3, 1);
 }
+
+@keyframes cta-pulse {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(17,24,39,0.4); }
+  50%       { box-shadow: 0 0 0 10px rgba(17,24,39,0); }
+}
+html.dark @keyframes cta-pulse {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(228,228,231,0.35); }
+  50%       { box-shadow: 0 0 0 10px rgba(228,228,231,0); }
+}
+.cta-pulse {
+  animation: cta-pulse 1.4s ease-out infinite;
+}
+
+@keyframes nudge-in {
+  from { opacity: 0; transform: translateY(6px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+@keyframes nudge-out {
+  from { opacity: 1; transform: translateY(0); }
+  to   { opacity: 0; transform: translateY(-4px); }
+}
+@keyframes nudge-bob {
+  0%, 100% { transform: translateY(0); }
+  50%       { transform: translateY(-4px); }
+}
+.nudge-enter {
+  animation: nudge-in 0.4s cubic-bezier(0.16,1,0.3,1) forwards,
+             nudge-bob 2s ease-in-out 0.4s infinite;
+}
+.nudge-exit {
+  animation: nudge-out 0.35s cubic-bezier(0.4,0,1,1) forwards;
+}
+
+@keyframes shimmer-flow {
+  0%   { transform: translateX(-100%) skewX(-15deg); }
+  100% { transform: translateX(300%) skewX(-15deg); }
+}
+.logo-shimmer {
+  position: relative;
+  overflow: hidden;
+}
+.logo-shimmer::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    rgba(255,255,255,0.5) 50%,
+    transparent 100%
+  );
+  width: 40%;
+  animation: shimmer-flow 2s ease-in-out infinite;
+}
+
+@keyframes toast-in {
+  from { transform: translateY(12px); opacity: 0; }
+  to   { transform: translateY(0px);  opacity: 1; }
+}
+@keyframes toast-float {
+  0%, 100% { transform: translateY(0px); }
+  50%       { transform: translateY(-5px); }
+}
+.toast-enter {
+  animation: toast-in 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+.toast-float {
+  animation: toast-in 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards,
+             toast-float 3s ease-in-out 0.4s infinite;
+}

@@ -26,6 +26,8 @@ export function ActionButton({ prompt, toolUrl, toolName, label, onCopied }: Act
           ? 'bg-gray-900 dark:bg-zinc-200 text-white dark:text-zinc-900 hover:bg-gray-800 dark:hover:bg-zinc-300 active:scale-[0.98] shadow-[0_4px_14px_rgba(0,0,0,0.18)] dark:shadow-none'
           : buttonState === 'copied'
           ? 'bg-emerald-500 dark:bg-emerald-400 text-white dark:text-white'
+          : buttonState === 'done'
+          ? 'bg-emerald-500 dark:bg-emerald-400 text-white dark:text-white'
           : 'bg-gray-300 dark:bg-[#2a2a2a] text-white dark:text-[#525252]'
         }
       `}
@@ -37,7 +39,7 @@ export function ActionButton({ prompt, toolUrl, toolName, label, onCopied }: Act
             <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1" />
           </svg>
         )}
-        {buttonState === 'copied' && (
+        {(buttonState === 'copied' || buttonState === 'done') && (
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
             <polyline points="20,6 9,17 4,12" />
           </svg>
@@ -47,7 +49,7 @@ export function ActionButton({ prompt, toolUrl, toolName, label, onCopied }: Act
             <path d="M21 12a9 9 0 1 1-6.219-8.56" />
           </svg>
         )}
-        {buttonState === 'idle' ? idleLabel : buttonState === 'copied' ? 'Copied!' : 'Opening...'}
+        {buttonState === 'idle' ? idleLabel : buttonState === 'copied' ? '복사됨' : buttonState === 'done' ? '복사됨' : 'Opening...'}
       </span>
     </button>
   )

@@ -2,7 +2,7 @@
 
 import { useState, useCallback } from 'react'
 
-export type ButtonState = 'idle' | 'copied' | 'opening'
+export type ButtonState = 'idle' | 'copied' | 'opening' | 'done'
 
 export function useActionButton(onCopied?: () => void) {
   const [buttonState, setButtonState] = useState<ButtonState>('idle')
@@ -32,7 +32,7 @@ export function useActionButton(onCopied?: () => void) {
       window.open(toolUrl, '_blank', 'noopener,noreferrer')
 
       setTimeout(() => {
-        setButtonState('idle')
+        setButtonState('done')
       }, 1500)
     }, 800)
   }, [buttonState, onCopied])

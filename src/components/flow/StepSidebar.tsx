@@ -8,19 +8,42 @@ interface StepSidebarProps {
   getStepStatus: (index: number) => StepStatus
   onStepClick: (index: number) => void
   estimatedTime: string
+  onNext?: () => void
+  canGoNext?: boolean
+  isFlowComplete?: boolean
+  currentStepIndex?: number
+  completedCount?: number
 }
+
+const NUDGE_MESSAGES = [
+  '첫 번째 단계부터 시작해볼까요?',
+  '좋아요, 계속 이어가세요!',
+  '절반을 넘었어요, 잘 하고 있어요!',
+  '거의 다 왔어요, 조금만 더!',
+]
 
 export function StepSidebar({
   steps,
   getStepStatus,
   onStepClick,
   estimatedTime,
+  onNext,
+  canGoNext,
+  isFlowComplete,
+  currentStepIndex = 0,
+  completedCount = 0,
 }: StepSidebarProps) {
+  const total = steps.length
+  const progress = isFlowComplete ? 100 : Math.round((completedCount / total) * 100)
+  const nudgeIndex = isFlowComplete
+    ? 3
+    : Math.min(Math.floor((completedCount / total) * NUDGE_MESSAGES.length), NUDGE_MESSAGES.length - 1)
+  const nudgeText = isFlowComplete ? '모든 단계를 완료했어요!' : NUDGE_MESSAGES[nudgeIndex]
 
   return (
     <div className="bg-white dark:bg-[#1a1a1a] rounded-2xl border border-gray-100 dark:border-white/[0.08]">
       <div className="px-5 pt-5 pb-1">
-        <p className="text-[10px] font-bold text-gray-400 dark:text-[#737373] uppercase tracking-widest mb-5">
+        <p className="text-[10px] font-bold text-gray-400 dark:text-[#737373] uppercase tracking-wider mb-5">
           진행 현황
         </p>
         <div className="flex flex-col">
@@ -85,10 +108,38 @@ export function StepSidebar({
       </div>
 
       <div className="px-5 pt-4 pb-5 border-t border-gray-50 dark:border-white/[0.06] mt-2 space-y-3">
+        {/* 진행률 바 */}
+        <div>
+          <div className="flex items-center justify-between mb-1.5">
+            <span className="text-[11px] font-semibold text-gray-500 dark:text-[#737373]">{nudgeText}</span>
+            <span className="text-[11px] font-bold text-gray-400 dark:text-[#525252]">{progress}%</span>
+          </div>
+          <div className="h-1.5 w-full bg-gray-100 dark:bg-white/[0.06] rounded-full overflow-hidden">
+            <div
+              className="h-full bg-gray-900 dark:bg-zinc-200 rounded-full transition-all duration-500 ease-out"
+              style={{ width: `${progress}%` }}
+            />
+          </div>
+        </div>
+
         <div className="flex items-center justify-between text-[11px] text-gray-400 dark:text-[#737373]">
           <span>⏱ {estimatedTime}</span>
-          <span>{steps.length}단계</span>
+          <span>{completedCount}/{total}단계 완료</span>
         </div>
+
+        {!isFlowComplete && currentStepIndex < steps.length - 1 && (
+          <button
+            onClick={onNext}
+            disabled={!canGoNext}
+            className={`w-full py-3 rounded-[12px] text-[13px] font-semibold transition-all ${
+              canGoNext
+                ? 'bg-gray-900 dark:bg-zinc-200 text-white dark:text-zinc-900 hover:bg-gray-800 dark:hover:bg-zinc-300 active:scale-[0.98] cta-pulse'
+                : 'bg-gray-100 dark:bg-[#232323] text-gray-300 dark:text-[#525252] cursor-not-allowed'
+            }`}
+          >
+            다음 단계 →
+          </button>
+        )}
       </div>
     </div>
   )

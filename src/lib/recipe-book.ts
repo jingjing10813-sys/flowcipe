@@ -1,29 +1,37 @@
+import { supabase } from './supabase'
 import { Flow } from '@/types/flow'
 
-const STORAGE_KEY = 'reciflo_recipes'
-
-export function getSavedRecipes(): Flow[] {
-  if (typeof window === 'undefined') return []
-  try {
-    const raw = localStorage.getItem(STORAGE_KEY)
-    return raw ? JSON.parse(raw) : []
-  } catch {
-    return []
-  }
+export async function getSavedRecipes(userEmail: string): Promise<Flow[]> {
+  const { data, error } = await supabase
+    .from('saved_recipes')
+    .select('flow')
+    .eq('user_email', userEmail)
+    .order('created_at', { ascending: false })
+  if (error || !data) return []
+  return data.map((r) => r.flow as Flow)
 }
 
-export function saveRecipe(flow: Flow): void {
-  const recipes = getSavedRecipes()
-  const exists = recipes.some((r) => r.id === flow.id)
-  if (exists) return
-  localStorage.setItem(STORAGE_KEY, JSON.stringify([flow, ...recipes]))
+export async function saveRecipe(userEmail: string, flow: Flow): Promise<void> {
+  await supabase.from('saved_recipes').upsert(
+    { user_email: userEmail, flow_id: flow.id, flow },
+    { onConflict: 'user_email,flow_id' }
+  )
 }
 
-export function isRecipeSaved(flowId: string): boolean {
-  return getSavedRecipes().some((r) => r.id === flowId)
+export async function isRecipeSaved(userEmail: string, flowId: string): Promise<boolean> {
+  const { data } = await supabase
+    .from('saved_recipes')
+    .select('id')
+    .eq('user_email', userEmail)
+    .eq('flow_id', flowId)
+    .maybeSingle()
+  return !!data
 }
 
-export function removeRecipe(flowId: string): void {
-  const recipes = getSavedRecipes().filter((r) => r.id !== flowId)
-  localStorage.setItem(STORAGE_KEY, JSON.stringify(recipes))
+export async function removeRecipe(userEmail: string, flowId: string): Promise<void> {
+  await supabase
+    .from('saved_recipes')
+    .delete()
+    .eq('user_email', userEmail)
+    .eq('flow_id', flowId)
 }

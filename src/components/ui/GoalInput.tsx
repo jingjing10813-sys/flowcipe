@@ -5,7 +5,7 @@ import { useRouter } from 'next/navigation'
 import { useSession } from 'next-auth/react'
 import { LoadingFlow } from './LoadingFlow'
 import { LoginModal } from '@/components/auth/LoginModal'
-import { trackEvent } from '@/lib/analytics'
+import { trackFlowGenerated } from '@/lib/analytics'
 
 const EXAMPLES = [
   '블로그 글을 유튜브 쇼츠로 자동 제작하고 싶어',
@@ -83,17 +83,9 @@ export function GoalInput({ value: externalValue, onChange: externalOnChange }: 
     if (!goal.trim() || isLoading) return
 
     if (!session) {
-      trackEvent({ event: 'login_prompted', goal_text: goal.trim() })
       setShowLogin(true)
       return
     }
-
-    trackEvent({
-      event: 'submit_click',
-      user_id: session.user?.email ?? undefined,
-      user_email: session.user?.email ?? undefined,
-      goal_text: goal.trim(),
-    })
 
     setIsLoading(true)
     try {
@@ -105,14 +97,7 @@ export function GoalInput({ value: externalValue, onChange: externalOnChange }: 
       const data = await res.json()
       if (!res.ok) throw new Error(data.error)
 
-      trackEvent({
-        event: 'flow_generated',
-        user_id: session.user?.email ?? undefined,
-        user_email: session.user?.email ?? undefined,
-        flow_id: data.flow.id,
-        goal_text: goal.trim(),
-        steps_count: data.flow.steps?.length,
-      })
+      trackFlowGenerated(goal.trim())
 
       sessionStorage.setItem(`flow_${data.flow.id}`, JSON.stringify(data.flow))
       pendingNavRef.current = `/flow/${data.flow.id}`

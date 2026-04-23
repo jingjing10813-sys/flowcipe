@@ -1,9 +1,10 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { Step, StepStatus } from '@/types/flow'
 import { ActionButton } from '@/components/ui/ActionButton'
 import { ToolIcon } from '@/components/ui/ToolIcon'
+import { PromptText } from '@/components/ui/PromptText'
 
 interface StepCardProps {
   step: Step
@@ -13,17 +14,19 @@ interface StepCardProps {
 }
 
 const PROMPT_TYPE_LABELS: Record<string, string> = {
-  system: 'SYSTEM PROMPT',
-  user: 'USER INPUT',
-  visual: 'VISUAL PROMPT',
+  system: 'PROMPT',
+  user: 'PROMPT',
+  visual: 'PROMPT',
   config: 'CONFIGURATION',
 }
 
-export function StepCard({ step, status, onCopied, onComplete }: StepCardProps) {
+export function StepCard({ step, status, onCopied }: StepCardProps) {
   const isActive = status === 'active'
   const isCommand = step.stepType === 'command'
   const [commandCopied, setCommandCopied] = useState(false)
   const [hasCopied, setHasCopied] = useState(false)
+  const [showNudge, setShowNudge] = useState(isActive && step.order === 1)
+  const nudgeExiting = false
 
   const handleCommandCopy = async () => {
     const text = step.commandGuide ?? ''
@@ -62,14 +65,9 @@ export function StepCard({ step, status, onCopied, onComplete }: StepCardProps) 
       <div className="flex items-start justify-between px-6 pt-6 pb-5">
         <div className="min-w-0 flex-1 mr-4">
           <div className="flex items-center gap-2 mb-1.5">
-            <span className="text-[10px] font-bold text-gray-400 dark:text-[#525252] uppercase tracking-widest">
+            <span className="text-[10px] font-bold text-gray-400 dark:text-[#525252] uppercase tracking-wider">
               STEP {String(step.order).padStart(2, '0')}
             </span>
-            {isCommand && isActive && (
-              <span className="text-[10px] font-semibold text-blue-500 bg-blue-50 dark:text-blue-400 dark:bg-blue-900/20 px-2 py-0.5 rounded-full">
-                세션 계속
-              </span>
-            )}
           </div>
           <h2 className="text-[22px] sm:text-[26px] font-bold text-gray-900 dark:text-[#f5f5f5] leading-snug tracking-tight">
             {step.title}
@@ -91,49 +89,63 @@ export function StepCard({ step, status, onCopied, onComplete }: StepCardProps) 
       {/* Body */}
       <div className="px-6 pb-6">
 
-        {/* IN guide */}
-        <div className="flex items-start gap-3 mb-5 px-4 py-3 bg-gray-50 dark:bg-[#232323] rounded-xl">
-          <span className="text-[10px] font-bold text-gray-400 dark:text-[#737373] uppercase tracking-wider mt-0.5 shrink-0">IN</span>
-          <p className="text-[13px] text-gray-600 dark:text-[#a3a3a3] leading-relaxed">{step.inputGuide}</p>
-        </div>
+        {/* IN guide — 프롬프트 스텝만 틴트 박스, 커맨드 스텝은 파란 배너로 대체 */}
+        {!isCommand && (
+          <div className="mb-3 px-4 py-3 bg-blue-50/60 dark:bg-blue-900/10 border border-blue-100 dark:border-blue-900/30 rounded-xl">
+            <PromptText text={step.inputGuide} variant="blue" />
+          </div>
+        )}
 
         {/* Prompt Step */}
         {!isCommand && (
           <>
             <div className="mb-5">
-              <p className="text-[10px] font-bold text-gray-400 dark:text-[#525252] uppercase tracking-widest mb-2">
+              <p className="text-[10px] font-bold text-gray-400 dark:text-[#525252] uppercase tracking-wider mb-2">
                 {promptLabel}
               </p>
               {step.promptType === 'config' && step.config ? (
                 <div className="bg-gray-50 dark:bg-[#111] border border-gray-100 dark:border-white/[0.07] rounded-xl p-4 grid grid-cols-2 gap-x-6 gap-y-3">
                   {Object.entries(step.config).map(([key, value]) => (
                     <div key={key}>
-                      <p className="text-[9px] font-bold text-gray-400 dark:text-[#737373] uppercase tracking-widest mb-0.5">{key}</p>
+                      <p className="text-[9px] font-bold text-gray-400 dark:text-[#737373] uppercase tracking-wider mb-0.5">{key}</p>
                       <p className="text-[13px] font-semibold text-gray-700 dark:text-[#f5f5f5]">{value}</p>
                     </div>
                   ))}
                 </div>
               ) : (
-                <div className="bg-gray-50 dark:bg-[#111] border border-gray-100 dark:border-white/[0.07] rounded-xl p-4">
-                  <p className="text-[14px] text-gray-700 dark:text-[#d4d4d4] leading-relaxed whitespace-pre-line">
-                    {step.prompt}
-                  </p>
+                <div className="rounded-xl border border-gray-200 dark:border-white/[0.1] bg-gray-50 dark:bg-[#111] px-4 py-4">
+                  <PromptText text={step.prompt ?? ''} />
                 </div>
               )}
             </div>
 
             {isActive && (
               <div className="mb-5">
-                <ActionButton
-                  prompt={copyText}
-                  toolUrl={step.tool.url}
-                  toolName={step.tool.name}
-                  label={ctaLabel}
-                  onCopied={() => { setHasCopied(true); onCopied?.() }}
-                />
-                <p className="text-center text-[12px] mt-2 text-gray-500 dark:text-[#737373] font-medium">
-                  {hasCopied ? '여기까지 왔으면 전체의 75%가 끝난 거예요.' : '버튼을 누르면 프롬프트가 자동으로 복사돼요'}
-                </p>
+                {step.promptType === 'config' ? (
+                  <button
+                    onClick={() => window.open(step.tool.url, '_blank', 'noopener,noreferrer')}
+                    className="w-full py-[18px] px-6 rounded-[14px] font-bold text-[15px] bg-gray-900 dark:bg-zinc-200 text-white dark:text-zinc-900 hover:bg-gray-800 dark:hover:bg-zinc-300 active:scale-[0.98] transition-all shadow-[0_4px_14px_rgba(0,0,0,0.18)] dark:shadow-none"
+                  >
+                    툴로 이동하기 →
+                  </button>
+                ) : (
+                  <>
+                    <div className={showNudge && !nudgeExiting ? 'cta-pulse rounded-[14px]' : ''}>
+                      <ActionButton
+                        prompt={copyText}
+                        toolUrl={step.tool.url}
+                        toolName={step.tool.name}
+                        label={ctaLabel}
+                        onCopied={() => { setHasCopied(true); setShowNudge(false); onCopied?.() }}
+                      />
+                    </div>
+                    {!hasCopied && (
+                      <p className="text-center text-[12px] mt-2 text-gray-400 dark:text-[#737373]">
+                        버튼을 누르면 프롬프트가 자동으로 복사돼요
+                      </p>
+                    )}
+                  </>
+                )}
               </div>
             )}
           </>
@@ -142,55 +154,44 @@ export function StepCard({ step, status, onCopied, onComplete }: StepCardProps) 
         {/* Command Step */}
         {isCommand && (
           <>
-            {isActive && (
-              <div className="mb-4 flex items-center gap-2 px-4 py-3 bg-blue-50 dark:bg-blue-900/20 rounded-xl">
-                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#60a5fa" strokeWidth="2" className="shrink-0">
-                  <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" />
-                </svg>
-                <p className="text-[12px] text-blue-500 dark:text-blue-400 font-medium">
-                  이전 대화를 닫지 말고, 아래 명령을 이어서 입력하세요
-                </p>
-              </div>
-            )}
-            <button
-              onClick={isActive ? handleCommandCopy : undefined}
-              className={`w-full mb-5 rounded-xl p-4 text-left transition-all ${
-                isActive
-                  ? 'bg-gray-900 dark:bg-[#232323] hover:opacity-80 active:scale-[0.99] cursor-pointer'
-                  : 'bg-gray-100 dark:bg-[#232323]/60 cursor-default'
-              }`}
-            >
-              <p className={`text-[10px] font-bold uppercase tracking-widest mb-2 flex items-center justify-between ${isActive ? 'text-gray-500 dark:text-[#737373]' : 'text-gray-400 dark:text-[#525252]'}`}>
-                이렇게 입력하세요
+            <div className="mb-3 px-4 py-3 bg-blue-50/60 dark:bg-blue-900/10 border border-blue-100 dark:border-blue-900/30 rounded-xl">
+              <PromptText text={step.inputGuide} variant="blue" />
+            </div>
+            <div className="mb-5">
+              <div className="flex items-center justify-between mb-2">
+                <p className="text-[10px] font-bold text-gray-400 dark:text-[#525252] uppercase tracking-wider">PROMPT</p>
                 {isActive && (
-                  <span className={`text-[10px] font-semibold normal-case tracking-normal ${commandCopied ? 'text-emerald-400' : 'text-gray-600 dark:text-[#525252]'}`}>
-                    {commandCopied ? '복사됨 ✓' : '눌러서 복사'}
+                  <span className={`text-[10px] font-semibold ${commandCopied ? 'text-emerald-500' : 'text-gray-400 dark:text-[#525252]'}`}>
+                    {commandCopied ? '복사됨 ✓' : ''}
                   </span>
                 )}
-              </p>
-              <p className={`text-[15px] font-medium leading-relaxed ${isActive ? 'text-white dark:text-[#f5f5f5]' : 'text-gray-500 dark:text-[#737373]'}`}>
-                &ldquo;{step.commandGuide}&rdquo;
-              </p>
-            </button>
+              </div>
+              <div className="rounded-xl border border-gray-200 dark:border-white/[0.1] bg-gray-50 dark:bg-[#111] px-4 py-4">
+                <PromptText text={step.commandGuide ?? ''} />
+              </div>
+            </div>
             {isActive && (
               <div className="mb-5">
-                <button
-                  onClick={onComplete}
-                  className="w-full py-3.5 rounded-[14px] font-semibold text-[14px] bg-gray-100 dark:bg-[#232323] text-gray-600 dark:text-[#a3a3a3] hover:bg-gray-200 dark:hover:bg-[#2a2a2a] active:scale-[0.98] transition-all"
-                >
-                  완료하고 계속하기
-                </button>
+                <ActionButton
+                  prompt={step.commandGuide ?? ''}
+                  toolUrl={step.tool.url}
+                  toolName={step.tool.name}
+                  label={ctaLabel}
+                  onCopied={() => { setHasCopied(true); onCopied?.() }}
+                />
               </div>
             )}
           </>
         )}
 
         {/* OUT guide */}
-        <div className="flex items-start gap-3 pt-4 border-t border-gray-50 dark:border-white/[0.06]">
+        <div className="flex items-start gap-3 pt-3 border-t border-gray-50 dark:border-white/[0.06]">
           <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="mt-0.5 shrink-0 text-gray-300 dark:text-[#525252]">
             <path d="M5 12h14M12 5l7 7-7 7" />
           </svg>
-          <p className="text-[12px] text-gray-400 dark:text-[#737373] leading-relaxed">{step.outputGuide}</p>
+          <div className="flex-1">
+            <PromptText text={step.outputGuide} variant="muted" />
+          </div>
         </div>
       </div>
     </div>

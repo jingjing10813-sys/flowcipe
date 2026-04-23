@@ -34,6 +34,12 @@ export function useFlowState(totalSteps: number) {
 
   const isFlowComplete = completedSteps.size === totalSteps
 
+  const resetFlow = useCallback(() => {
+    setCurrentStepIndex(0)
+    setCompletedSteps(new Set())
+    setCopiedSteps(new Set())
+  }, [])
+
   return {
     currentStepIndex,
     completedSteps,
@@ -42,6 +48,7 @@ export function useFlowState(totalSteps: number) {
     goToStep,
     markStepCopied,
     completeCurrentStep,
+    resetFlow,
     isFlowComplete,
   }
 }

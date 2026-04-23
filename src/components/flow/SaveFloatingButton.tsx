@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
+import { useSession } from 'next-auth/react'
 import { Flow } from '@/types/flow'
 import { saveRecipe, isRecipeSaved } from '@/lib/recipe-book'
 
@@ -11,22 +12,25 @@ interface SaveFloatingButtonProps {
 
 export function SaveFloatingButton({ flow }: SaveFloatingButtonProps) {
   const router = useRouter()
+  const { data: session } = useSession()
   const [saved, setSaved] = useState(false)
 
   useEffect(() => {
-    setSaved(isRecipeSaved(flow.id))
-  }, [flow.id])
+    const email = session?.user?.email
+    if (!email) return
+    isRecipeSaved(email, flow.id).then(setSaved)
+  }, [flow.id, session?.user?.email])
 
-  const handleSave = () => {
+  const handleSave = async () => {
     if (saved) {
       router.push('/recipe-book')
       return
     }
-    saveRecipe(flow)
+    const email = session?.user?.email
+    if (!email) return
+    await saveRecipe(email, flow)
     setSaved(true)
-    setTimeout(() => {
-      router.push('/recipe-book')
-    }, 600)
+    setTimeout(() => router.push('/recipe-book'), 600)
   }
 
   return (

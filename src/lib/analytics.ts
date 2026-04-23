@@ -1,31 +1,44 @@
-import { supabase } from './supabase'
+import * as amplitude from '@amplitude/analytics-browser'
 
-type EventName =
-  | 'submit_click'
-  | 'flow_generated'
-  | 'step_started'
-  | 'step_completed'
-  | 'flow_completed'
-  | 'login_prompted'
-  | 'login_success'
+let initialized = false
 
-interface TrackEventParams {
-  event: EventName
-  user_id?: string
-  user_email?: string
-  flow_id?: string
-  goal_text?: string
-  step_index?: number
-  steps_count?: number
+export function initAmplitude() {
+  if (initialized || typeof window === 'undefined') return
+  amplitude.init(process.env.NEXT_PUBLIC_AMPLITUDE_API_KEY!, { autocapture: false })
+  initialized = true
 }
 
-export async function trackEvent(params: TrackEventParams) {
-  try {
-    await supabase.from('flow_events').insert({
-      ...params,
-      created_at: new Date().toISOString(),
-    })
-  } catch {
-    // 트래킹 실패가 앱 동작에 영향 없도록 조용히 처리
-  }
+export function identifyUser(email: string) {
+  initAmplitude()
+  amplitude.setUserId(email)
+}
+
+function track(event: string, props?: Record<string, unknown>) {
+  initAmplitude()
+  amplitude.track(event, props)
+}
+
+// Flow 생성 요청 (목표 입력 → 생성)
+export function trackFlowGenerated(goal: string) {
+  track('flow_generated', { goal })
+}
+
+// Flow 실행 시작 — 실행 전환율 분자
+export function trackFlowStarted(flowId: string, goal: string) {
+  track('flow_started', { flow_id: flowId, goal })
+}
+
+// Step 완료 — Step 완료율
+export function trackStepCompleted(flowId: string, stepOrder: number, stepTitle: string) {
+  track('step_completed', { flow_id: flowId, step_order: stepOrder, step_title: stepTitle })
+}
+
+// Flow 완주 — Flow 완주율
+export function trackFlowCompleted(flowId: string, goal: string, totalSteps: number) {
+  track('flow_completed', { flow_id: flowId, goal, total_steps: totalSteps })
+}
+
+// 레시피 저장
+export function trackRecipeSaved(flowId: string, goal: string) {
+  track('recipe_saved', { flow_id: flowId, goal })
 }
