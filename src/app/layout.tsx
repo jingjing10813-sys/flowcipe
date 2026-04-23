@@ -15,11 +15,13 @@ export const metadata: Metadata = {
     siteName: 'Reciflo',
     locale: 'ko_KR',
     type: 'website',
+    images: [{ url: '/og-image.png', width: 1200, height: 630 }],
   },
   twitter: {
     card: 'summary_large_image',
     title: "Reciflo — AI 워크플로우 레시피 플랫폼",
     description: "AI 툴을 재료로, Flow를 레시피로. 목표를 입력하면 실행 흐름이 자동으로 설계됩니다.",
+    images: ['/og-image.png'],
   },
 };
 
