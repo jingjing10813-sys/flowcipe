@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation'
 import { useSession } from 'next-auth/react'
 import { Flow } from '@/types/flow'
 import { saveRecipe, isRecipeSaved } from '@/lib/recipe-book'
+import { LoginModal } from '@/components/auth/LoginModal'
 
 interface SaveFloatingButtonProps {
   flow: Flow
@@ -14,6 +15,7 @@ export function SaveFloatingButton({ flow }: SaveFloatingButtonProps) {
   const router = useRouter()
   const { data: session } = useSession()
   const [saved, setSaved] = useState(false)
+  const [showLogin, setShowLogin] = useState(false)
 
   useEffect(() => {
     const email = session?.user?.email
@@ -27,13 +29,18 @@ export function SaveFloatingButton({ flow }: SaveFloatingButtonProps) {
       return
     }
     const email = session?.user?.email
-    if (!email) return
+    if (!email) {
+      setShowLogin(true)
+      return
+    }
     await saveRecipe(email, flow)
     setSaved(true)
     setTimeout(() => router.push('/recipe-book'), 600)
   }
 
   return (
+    <>
+    {showLogin && <LoginModal onClose={() => setShowLogin(false)} />}
     <div className="fixed bottom-8 right-4 lg:right-8 z-50">
       <button
         onClick={handleSave}
@@ -64,5 +71,6 @@ export function SaveFloatingButton({ flow }: SaveFloatingButtonProps) {
         )}
       </button>
     </div>
+    </>
   )
 }

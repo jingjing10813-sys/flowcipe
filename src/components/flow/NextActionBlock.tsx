@@ -7,6 +7,7 @@ import { motion } from 'framer-motion'
 import { Flow } from '@/types/flow'
 import { saveRecipe, isRecipeSaved } from '@/lib/recipe-book'
 import { trackRecipeSaved } from '@/lib/analytics'
+import { LoginModal } from '@/components/auth/LoginModal'
 
 interface NextActionBlockProps {
   isVisible: boolean
@@ -18,6 +19,7 @@ export function NextActionBlock({ isVisible, flow, onRestart }: NextActionBlockP
   const router = useRouter()
   const { data: session } = useSession()
   const [saved, setSaved] = useState(false)
+  const [showLogin, setShowLogin] = useState(false)
 
   useEffect(() => {
     const email = session?.user?.email
@@ -30,13 +32,18 @@ export function NextActionBlock({ isVisible, flow, onRestart }: NextActionBlockP
 
   const handleSave = async () => {
     const email = session?.user?.email
-    if (!email) return
+    if (!email) {
+      setShowLogin(true)
+      return
+    }
     await saveRecipe(email, flow)
     trackRecipeSaved(flow.id, flow.goal)
     setSaved(true)
   }
 
   return (
+    <>
+    {showLogin && <LoginModal onClose={() => setShowLogin(false)} />}
     <motion.div
       initial={{ opacity: 0, y: 12 }}
       animate={{ opacity: 1, y: 0 }}
@@ -103,5 +110,6 @@ export function NextActionBlock({ isVisible, flow, onRestart }: NextActionBlockP
         </button>
       </div>
     </motion.div>
+    </>
   )
 }

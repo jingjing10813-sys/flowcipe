@@ -6,6 +6,7 @@ import { useSession } from 'next-auth/react'
 import { LoadingFlow } from './LoadingFlow'
 import { LoginModal } from '@/components/auth/LoginModal'
 import { trackFlowGenerated } from '@/lib/analytics'
+import { supabase } from '@/lib/supabase'
 
 const EXAMPLES = [
   '블로그 글을 유튜브 쇼츠로 자동 제작하고 싶어',
@@ -100,6 +101,7 @@ export function GoalInput({ value: externalValue, onChange: externalOnChange }: 
       trackFlowGenerated(goal.trim())
 
       sessionStorage.setItem(`flow_${data.flow.id}`, JSON.stringify(data.flow))
+      supabase.from('flows').upsert({ id: data.flow.id, flow: data.flow }).then(() => {})
       pendingNavRef.current = `/flow/${data.flow.id}`
       setApiDone(true)
     } catch (err) {
