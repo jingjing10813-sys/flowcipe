@@ -2,9 +2,25 @@ import type { Metadata } from "next";
 import "./globals.css";
 import { SessionProvider } from "@/components/auth/SessionProvider";
 
+const BASE_URL = 'https://reciflo.com'
+
 export const metadata: Metadata = {
   title: "Reciflo — AI 워크플로우 레시피 플랫폼",
   description: "AI 툴을 재료로, Flow를 레시피로. 목표를 입력하면 실행 흐름이 자동으로 설계됩니다.",
+  metadataBase: new URL(BASE_URL),
+  openGraph: {
+    title: "Reciflo — AI 워크플로우 레시피 플랫폼",
+    description: "AI 툴을 재료로, Flow를 레시피로. 목표를 입력하면 실행 흐름이 자동으로 설계됩니다.",
+    url: BASE_URL,
+    siteName: 'Reciflo',
+    locale: 'ko_KR',
+    type: 'website',
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: "Reciflo — AI 워크플로우 레시피 플랫폼",
+    description: "AI 툴을 재료로, Flow를 레시피로. 목표를 입력하면 실행 흐름이 자동으로 설계됩니다.",
+  },
 };
 
 export default function RootLayout({
