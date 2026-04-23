@@ -11,7 +11,7 @@ interface StepSidebarProps {
   onNext?: () => void
   canGoNext?: boolean
   isFlowComplete?: boolean
-  currentStepIndex?: number
+
   completedCount?: number
 }
 
@@ -30,7 +30,6 @@ export function StepSidebar({
   onNext,
   canGoNext,
   isFlowComplete,
-  currentStepIndex = 0,
   completedCount = 0,
 }: StepSidebarProps) {
   const total = steps.length

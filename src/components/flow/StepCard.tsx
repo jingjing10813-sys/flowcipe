@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState } from 'react'
 import { Step, StepStatus } from '@/types/flow'
 import { ActionButton } from '@/components/ui/ActionButton'
 import { ToolIcon } from '@/components/ui/ToolIcon'
@@ -27,23 +27,6 @@ export function StepCard({ step, status, onCopied }: StepCardProps) {
   const [hasCopied, setHasCopied] = useState(false)
   const [showNudge, setShowNudge] = useState(isActive && step.order === 1)
   const nudgeExiting = false
-
-  const handleCommandCopy = async () => {
-    const text = step.commandGuide ?? ''
-    try { await navigator.clipboard.writeText(text) } catch {
-      const el = document.createElement('textarea')
-      el.value = text
-      el.style.position = 'fixed'
-      el.style.opacity = '0'
-      document.body.appendChild(el)
-      el.select()
-      document.execCommand('copy')
-      document.body.removeChild(el)
-    }
-    setCommandCopied(true)
-    onCopied?.()
-    setTimeout(() => setCommandCopied(false), 2000)
-  }
 
   const ctaLabel = (() => {
     if (step.promptType === 'config') return '설정 복사하기'

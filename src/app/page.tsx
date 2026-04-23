@@ -250,9 +250,11 @@ export default function Home() {
       <div className="relative bg-[#ffffff] dark:bg-[#0f0f0f] overflow-hidden">
 
         {/* Left — Frame 6 */}
+        {/* eslint-disable-next-line @next/next/no-img-element */}
         <img src="/logos/frame6.png" alt="" className="float-b hidden lg:block absolute pointer-events-none select-none" style={{ top: '120px', left: 0, width: '258px', height: '561px', animationDelay: '0s' }} />
 
         {/* Right — Frame 7 */}
+        {/* eslint-disable-next-line @next/next/no-img-element */}
         <img src="/logos/frame7.png" alt="" className="float-a hidden lg:block absolute pointer-events-none select-none" style={{ top: '120px', right: '-40px', width: '284px', height: '555px', animationDelay: '0.6s' }} />
 
         <div className="relative z-20 mx-auto max-w-[1100px] px-6 sm:px-8 pt-16 sm:pt-24 pb-16 sm:pb-20">
