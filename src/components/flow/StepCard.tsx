@@ -23,7 +23,6 @@ const PROMPT_TYPE_LABELS: Record<string, string> = {
 export function StepCard({ step, status, onCopied }: StepCardProps) {
   const isActive = status === 'active'
   const isCommand = step.stepType === 'command'
-  const [commandCopied, setCommandCopied] = useState(false)
   const [hasCopied, setHasCopied] = useState(false)
   const [showNudge, setShowNudge] = useState(isActive && step.order === 1)
   const nudgeExiting = false
@@ -143,11 +142,6 @@ export function StepCard({ step, status, onCopied }: StepCardProps) {
             <div className="mb-5">
               <div className="flex items-center justify-between mb-2">
                 <p className="text-[10px] font-bold text-gray-400 dark:text-[#525252] uppercase tracking-wider">PROMPT</p>
-                {isActive && (
-                  <span className={`text-[10px] font-semibold ${commandCopied ? 'text-emerald-500' : 'text-gray-400 dark:text-[#525252]'}`}>
-                    {commandCopied ? '복사됨 ✓' : ''}
-                  </span>
-                )}
               </div>
               <div className="rounded-xl border border-gray-200 dark:border-white/[0.1] bg-gray-50 dark:bg-[#111] px-4 py-4">
                 <PromptText text={step.commandGuide ?? ''} />
