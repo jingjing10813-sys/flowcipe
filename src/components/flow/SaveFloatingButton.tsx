@@ -41,7 +41,7 @@ export function SaveFloatingButton({ flow }: SaveFloatingButtonProps) {
   return (
     <>
     {showLogin && <LoginModal onClose={() => setShowLogin(false)} />}
-    <div className="fixed bottom-8 right-4 lg:right-8 z-50">
+    <div className="hidden lg:block fixed bottom-8 right-8 z-50">
       <button
         onClick={handleSave}
         className={`

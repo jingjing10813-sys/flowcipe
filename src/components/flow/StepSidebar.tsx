@@ -127,14 +127,13 @@ export function StepSidebar({
           <span>{completedCount}/{total}단계 완료</span>
         </div>
 
-        {!isFlowComplete && currentStepIndex < steps.length - 1 && (
+        {!isFlowComplete && (
           <button
             onClick={onNext}
-            disabled={!canGoNext}
             className={`w-full py-3 rounded-[12px] text-[13px] font-semibold transition-all ${
               canGoNext
                 ? 'bg-gray-900 dark:bg-zinc-200 text-white dark:text-zinc-900 hover:bg-gray-800 dark:hover:bg-zinc-300 active:scale-[0.98] cta-pulse'
-                : 'bg-gray-100 dark:bg-[#232323] text-gray-300 dark:text-[#525252] cursor-not-allowed'
+                : 'bg-gray-100 dark:bg-[#1e1e1e] text-gray-300 dark:text-[#404040]'
             }`}
           >
             다음 단계 →

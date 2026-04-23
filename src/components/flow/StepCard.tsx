@@ -123,7 +123,7 @@ export function StepCard({ step, status, onCopied }: StepCardProps) {
               <div className="mb-5">
                 {step.promptType === 'config' ? (
                   <button
-                    onClick={() => window.open(step.tool.url, '_blank', 'noopener,noreferrer')}
+                    onClick={() => { window.open(step.tool.url, '_blank', 'noopener,noreferrer'); onCopied?.() }}
                     className="w-full py-[18px] px-6 rounded-[14px] font-bold text-[15px] bg-gray-900 dark:bg-zinc-200 text-white dark:text-zinc-900 hover:bg-gray-800 dark:hover:bg-zinc-300 active:scale-[0.98] transition-all shadow-[0_4px_14px_rgba(0,0,0,0.18)] dark:shadow-none"
                   >
                     툴로 이동하기 →

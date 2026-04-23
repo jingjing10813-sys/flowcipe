@@ -114,7 +114,7 @@ export function FlowPageClient({ flow }: FlowPageClientProps) {
       </div>
 
       {/* Body */}
-      <div className="max-w-[1100px] mx-auto px-4 sm:px-6 py-6 sm:py-8">
+      <div className="max-w-[1100px] mx-auto px-4 sm:px-6 py-6 sm:py-8 pb-24 lg:pb-8">
         <div className="lg:grid lg:grid-cols-[1fr_272px] lg:gap-8">
 
           {/* Left: active step */}
@@ -182,6 +182,40 @@ export function FlowPageClient({ flow }: FlowPageClientProps) {
       </div>
 
       <SaveFloatingButton flow={flow} />
+
+      {/* 모바일 하단 고정 바 */}
+      {!isFlowComplete && (
+        <div className="lg:hidden fixed bottom-0 left-0 right-0 z-40 bg-white/90 dark:bg-[#1a1a1a]/90 backdrop-blur-md border-t border-gray-100 dark:border-white/[0.08] px-4 py-3">
+          <div className="flex items-center gap-3 max-w-[600px] mx-auto">
+            <div className="flex-1">
+              <div className="flex items-center justify-between mb-1.5">
+                <span className="text-[11px] font-semibold text-gray-500 dark:text-[#737373]">
+                  {completedSteps.size}/{flow.steps.length}단계 완료
+                </span>
+                <span className="text-[11px] font-bold text-gray-400 dark:text-[#525252]">
+                  {Math.round((completedSteps.size / flow.steps.length) * 100)}%
+                </span>
+              </div>
+              <div className="h-1.5 w-full bg-gray-200 dark:bg-white/[0.12] rounded-full overflow-hidden">
+                <div
+                  className="h-full bg-gray-900 dark:bg-zinc-200 rounded-full transition-all duration-500 ease-out"
+                  style={{ width: `${Math.round((completedSteps.size / flow.steps.length) * 100)}%` }}
+                />
+              </div>
+            </div>
+            <button
+                onClick={completeCurrentStep}
+                className={`shrink-0 px-4 py-2.5 rounded-[12px] text-[13px] font-semibold transition-all ${
+                  copiedSteps.has(currentStepIndex)
+                    ? 'bg-gray-900 dark:bg-zinc-200 text-white dark:text-zinc-900 active:scale-[0.97] cta-pulse'
+                    : 'bg-gray-100 dark:bg-[#1e1e1e] text-gray-300 dark:text-[#404040]'
+                }`}
+              >
+                다음 →
+              </button>
+          </div>
+        </div>
+      )}
     </AppLayout>
   )
 }
