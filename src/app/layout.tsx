@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import "./globals.css";
 import { SessionProvider } from "@/components/auth/SessionProvider";
 
-const BASE_URL = 'https://reciflo.com'
+const BASE_URL = 'https://flowcipe.vercel.app'
 
 export const metadata: Metadata = {
   title: "Reciflo — AI 워크플로우 레시피 플랫폼",
