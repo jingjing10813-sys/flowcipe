@@ -42,3 +42,8 @@ export function trackFlowCompleted(flowId: string, goal: string, totalSteps: num
 export function trackRecipeSaved(flowId: string, goal: string) {
   track('recipe_saved', { flow_id: flowId, goal })
 }
+
+// CTA 클릭 (복사 버튼)
+export function trackCtaClicked(flowId: string, stepOrder: number, stepTitle: string) {
+  track('cta_clicked', { flow_id: flowId, step_order: stepOrder, step_title: stepTitle })
+}

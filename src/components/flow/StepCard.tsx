@@ -5,10 +5,12 @@ import { Step, StepStatus } from '@/types/flow'
 import { ActionButton } from '@/components/ui/ActionButton'
 import { ToolIcon } from '@/components/ui/ToolIcon'
 import { PromptText } from '@/components/ui/PromptText'
+import { trackCtaClicked } from '@/lib/analytics'
 
 interface StepCardProps {
   step: Step
   status: StepStatus
+  flowId?: string
   onCopied?: () => void
   onComplete?: () => void
 }
@@ -20,7 +22,7 @@ const PROMPT_TYPE_LABELS: Record<string, string> = {
   config: 'CONFIGURATION',
 }
 
-export function StepCard({ step, status, onCopied }: StepCardProps) {
+export function StepCard({ step, status, flowId, onCopied }: StepCardProps) {
   const isActive = status === 'active'
   const isCommand = step.stepType === 'command'
   const [hasCopied, setHasCopied] = useState(false)
@@ -118,7 +120,7 @@ export function StepCard({ step, status, onCopied }: StepCardProps) {
                         toolUrl={step.tool.url}
                         toolName={step.tool.name}
                         label={ctaLabel}
-                        onCopied={() => { setHasCopied(true); setShowNudge(false); onCopied?.() }}
+                        onCopied={() => { setHasCopied(true); setShowNudge(false); trackCtaClicked(flowId ?? '', step.order, step.title); onCopied?.() }}
                       />
                     </div>
                     {!hasCopied && (
@@ -154,7 +156,7 @@ export function StepCard({ step, status, onCopied }: StepCardProps) {
                   toolUrl={step.tool.url}
                   toolName={step.tool.name}
                   label={ctaLabel}
-                  onCopied={() => { setHasCopied(true); onCopied?.() }}
+                  onCopied={() => { setHasCopied(true); trackCtaClicked(flowId ?? '', step.order, step.title); onCopied?.() }}
                 />
               </div>
             )}

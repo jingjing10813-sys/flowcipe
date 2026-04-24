@@ -134,6 +134,7 @@ export function FlowPageClient({ flow }: FlowPageClientProps) {
                 key={activeStep.id}
                 step={activeStep}
                 status="active"
+                flowId={flow.id}
                 onCopied={() => {
                   markStepCopied(currentStepIndex)
                   if (currentStepIndex === flow.steps.length - 1) handleComplete()
