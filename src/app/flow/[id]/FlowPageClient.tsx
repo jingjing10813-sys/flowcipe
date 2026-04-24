@@ -179,7 +179,7 @@ export function FlowPageClient({ flow }: FlowPageClientProps) {
                 getStepStatus={getStepStatus}
                 onStepClick={handleStepClick}
                 estimatedTime={flow.estimatedTime}
-                onNext={completeCurrentStep}
+                onNext={handleComplete}
                 canGoNext={copiedSteps.has(currentStepIndex)}
                 isFlowComplete={isFlowComplete}
 
@@ -214,7 +214,7 @@ export function FlowPageClient({ flow }: FlowPageClientProps) {
               </div>
             </div>
             <button
-                onClick={completeCurrentStep}
+                onClick={handleComplete}
                 className={`shrink-0 px-4 py-2.5 rounded-[12px] text-[13px] font-semibold transition-all ${
                   copiedSteps.has(currentStepIndex)
                     ? 'bg-gray-900 dark:bg-zinc-200 text-white dark:text-zinc-900 active:scale-[0.97] cta-pulse'
