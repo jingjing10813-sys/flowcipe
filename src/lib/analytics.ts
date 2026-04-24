@@ -17,7 +17,10 @@ export function identifyUser(email: string) {
 function track(event: string, props?: Record<string, unknown>) {
   initAmplitude()
   amplitude.track(event, props)
-  supabase.from('events').insert({ event_name: event, flow_id: props?.flow_id as string ?? null, properties: props ?? {} }).then(() => {})
+  ;(async () => {
+    const { error } = await supabase.from('events').insert({ event_name: event, flow_id: props?.flow_id as string ?? null, properties: props ?? {} })
+    if (error) console.error('[analytics] event insert failed:', error)
+  })()
 }
 
 // Flow 생성 요청 (목표 입력 → 생성)
