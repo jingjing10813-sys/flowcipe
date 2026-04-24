@@ -6,6 +6,7 @@ import { useSession } from 'next-auth/react'
 import { Flow } from '@/types/flow'
 import { saveRecipe, isRecipeSaved } from '@/lib/recipe-book'
 import { LoginModal } from '@/components/auth/LoginModal'
+import { trackRecipeSaved } from '@/lib/analytics'
 
 interface SaveFloatingButtonProps {
   flow: Flow
@@ -34,6 +35,7 @@ export function SaveFloatingButton({ flow }: SaveFloatingButtonProps) {
       return
     }
     await saveRecipe(email, flow)
+    trackRecipeSaved(flow.id, flow.goal)
     setSaved(true)
     setTimeout(() => router.push('/recipe-book'), 600)
   }
