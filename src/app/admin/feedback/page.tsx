@@ -6,9 +6,9 @@ import { useEffect, useState } from 'react'
 interface FeedbackEntry {
   id: number
   text: string
-  user: string
+  user_name: string
   email: string | null
-  createdAt: string
+  created_at: string
 }
 
 export default function AdminFeedbackPage() {
@@ -50,9 +50,9 @@ export default function AdminFeedbackPage() {
             <div key={item.id} className="bg-white rounded-[16px] px-5 py-4 border border-gray-100">
               <p className="text-[14px] text-gray-900 leading-relaxed whitespace-pre-wrap mb-3">{item.text}</p>
               <div className="flex items-center justify-between">
-                <span className="text-[12px] text-gray-400">{item.user}{item.email ? ` · ${item.email}` : ''}</span>
+                <span className="text-[12px] text-gray-400">{item.user_name}{item.email ? ` · ${item.email}` : ''}</span>
                 <span className="text-[12px] text-gray-300">
-                  {new Date(item.createdAt).toLocaleString('ko-KR', { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' })}
+                  {new Date(item.created_at).toLocaleString('ko-KR', { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' })}
                 </span>
               </div>
             </div>

@@ -1,17 +1,11 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { getServerSession } from 'next-auth'
-import fs from 'fs'
-import path from 'path'
+import { createClient } from '@supabase/supabase-js'
 
-const FILE = path.join(process.cwd(), 'data', 'feedback.json')
-
-function readFeedback() {
-  try {
-    return JSON.parse(fs.readFileSync(FILE, 'utf-8'))
-  } catch {
-    return []
-  }
-}
+const supabase = createClient(
+  process.env.NEXT_PUBLIC_SUPABASE_URL!,
+  process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
+)
 
 export async function POST(req: NextRequest) {
   const { text } = await req.json()
@@ -19,17 +13,11 @@ export async function POST(req: NextRequest) {
 
   const session = await getServerSession()
 
-  const entry = {
-    id: Date.now(),
+  await supabase.from('feedback').insert({
     text: text.trim(),
-    user: session?.user?.name ?? '익명',
+    user_name: session?.user?.name ?? '익명',
     email: session?.user?.email ?? null,
-    createdAt: new Date().toISOString(),
-  }
-
-  const list = readFeedback()
-  list.unshift(entry)
-  fs.writeFileSync(FILE, JSON.stringify(list, null, 2))
+  })
 
   return NextResponse.json({ ok: true })
 }
@@ -42,5 +30,10 @@ export async function GET() {
     return NextResponse.json({ error: 'unauthorized' }, { status: 401 })
   }
 
-  return NextResponse.json(readFeedback())
+  const { data } = await supabase
+    .from('feedback')
+    .select('*')
+    .order('created_at', { ascending: false })
+
+  return NextResponse.json(data ?? [])
 }
