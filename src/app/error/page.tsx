@@ -2,6 +2,7 @@
 
 import { useState, Suspense } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
+import Image from 'next/image'
 import { FeedbackModal } from '@/components/feedback/FeedbackModal'
 
 const EXAMPLES = [
@@ -40,7 +41,7 @@ function ErrorContent() {
     <div className="min-h-screen bg-white dark:bg-[#0a0a0a] flex items-center justify-center px-5">
       <div className="w-full max-w-[400px] flex flex-col items-center gap-6 text-center">
 
-        <img src="/reciflo-symbol-240.svg" alt="Reciflo" className="w-16 h-16" />
+        <Image src="/reciflo-symbol-240.svg" alt="Reciflo" width={64} height={64} />
 
         <div className="flex flex-col gap-2">
           <h1 className="text-[22px] font-bold text-gray-900 dark:text-white">

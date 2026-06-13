@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect, useRef } from 'react'
+import { useState, useEffect, useRef, Suspense } from 'react'
 import { useSearchParams } from 'next/navigation'
 import { AppLayout } from '@/components/layout/AppLayout'
 import { GoalInput } from '@/components/ui/GoalInput'
@@ -200,7 +200,7 @@ function SlotDigit({ digit, pos }: { digit: string; pos: number }) {
   )
 }
 
-export default function Home() {
+function HomeWithParams() {
   const searchParams = useSearchParams()
   const [goal, setGoal] = useState(() => searchParams.get('goal') ?? '')
   const autoSubmit = searchParams.get('autosubmit') === '1'
@@ -683,5 +683,13 @@ export default function Home() {
       </div>
 
     </AppLayout>
+  )
+}
+
+export default function Home() {
+  return (
+    <Suspense>
+      <HomeWithParams />
+    </Suspense>
   )
 }
