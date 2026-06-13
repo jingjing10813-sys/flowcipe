@@ -1,9 +1,21 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import { Flow } from '@/types/flow'
 import { removeRecipe } from '@/lib/recipe-book'
+
+function getSavedStepIndex(flowId: string): number {
+  try {
+    const raw = localStorage.getItem(`flow_progress_${flowId}`)
+    if (!raw) return 0
+    const { currentStepIndex, completedSteps } = JSON.parse(raw)
+    if ((completedSteps ?? []).length === 0) return 0
+    return currentStepIndex ?? 0
+  } catch {
+    return 0
+  }
+}
 
 const DIFFICULTY_COLORS: Record<string, { bg: string; text: string }> = {
   '입문': { bg: 'bg-emerald-50 dark:bg-emerald-900/20', text: 'text-emerald-600 dark:text-emerald-400' },
@@ -26,7 +38,12 @@ function formatDate(iso: string) {
 export function RecipeCard({ flow, onRemove, userEmail }: RecipeCardProps) {
   const router = useRouter()
   const [confirmDelete, setConfirmDelete] = useState(false)
+  const [savedStep, setSavedStep] = useState(0)
   const diff = DIFFICULTY_COLORS[flow.difficulty] ?? { bg: 'bg-gray-100 dark:bg-[#232323]', text: 'text-gray-500 dark:text-[#a3a3a3]' }
+
+  useEffect(() => {
+    setSavedStep(getSavedStepIndex(flow.id))
+  }, [flow.id])
 
   const handleDelete = async () => {
     if (!confirmDelete) {
@@ -85,9 +102,18 @@ export function RecipeCard({ flow, onRemove, userEmail }: RecipeCardProps) {
       <div className="flex gap-2">
         <button
           onClick={() => router.push(`/flow/${flow.id}`)}
-          className="flex-1 py-2.5 bg-gray-900 dark:bg-zinc-200 text-white dark:text-zinc-900 text-[13px] font-semibold rounded-[10px] hover:bg-gray-800 dark:hover:bg-zinc-300 active:scale-[0.98] transition-all"
+          className="flex-1 py-2.5 bg-gray-900 dark:bg-zinc-200 text-white dark:text-zinc-900 text-[13px] font-semibold rounded-[10px] hover:bg-gray-800 dark:hover:bg-zinc-300 active:scale-[0.98] transition-all flex items-center justify-center gap-1.5"
         >
-          다시 실행하기 →
+          {savedStep > 0 ? (
+            <>
+              <span className="text-[11px] font-bold px-1.5 py-0.5 rounded bg-white/20 dark:bg-black/20">
+                {savedStep + 1}단계
+              </span>
+              이어서 실행하기 →
+            </>
+          ) : (
+            '다시 실행하기 →'
+          )}
         </button>
         <button
           onClick={handleDelete}

@@ -35,7 +35,7 @@ export function FlowPageClient({ flow }: FlowPageClientProps) {
     isFlowComplete,
     resetFlow,
     completedSteps,
-  } = useFlowState(flow.steps.length)
+  } = useFlowState(flow.steps.length, flow.id)
 
   const trackedSteps = useRef<Set<number>>(new Set())
   const flowStartTracked = useRef(false)
