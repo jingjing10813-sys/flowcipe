@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation'
 import { useSession } from 'next-auth/react'
 import { LoadingFlow } from './LoadingFlow'
 import { LoginModal } from '@/components/auth/LoginModal'
+import { FeedbackModal } from '@/components/feedback/FeedbackModal'
 import { trackFlowGenerated } from '@/lib/analytics'
 import { supabase } from '@/lib/supabase'
 
@@ -28,6 +29,8 @@ export function GoalInput({ value: externalValue, onChange: externalOnChange }: 
   const [isLoading, setIsLoading] = useState(false)
   const [apiDone, setApiDone] = useState(false)
   const [showLogin, setShowLogin] = useState(false)
+  const [isError, setIsError] = useState(false)
+  const [showFeedback, setShowFeedback] = useState(false)
   const [isFocused, setIsFocused] = useState(false)
   const [typedText, setTypedText] = useState('')
   const pendingNavRef = useRef<string | null>(null)
@@ -107,6 +110,7 @@ export function GoalInput({ value: externalValue, onChange: externalOnChange }: 
     } catch (err) {
       console.error(err)
       setIsLoading(false)
+      setIsError(true)
     }
   }
 
@@ -115,6 +119,39 @@ export function GoalInput({ value: externalValue, onChange: externalOnChange }: 
   }
 
   if (isLoading) return <LoadingFlow done={apiDone} onComplete={handleAnimComplete} />
+
+  if (isError) return (
+    <>
+      <div className="flex flex-col items-center gap-5 py-6 text-center">
+        <div className="w-12 h-12 rounded-full bg-gray-100 dark:bg-[#232323] flex items-center justify-center text-2xl">
+          ⚡
+        </div>
+        <div>
+          <p className="text-[16px] font-semibold text-gray-900 dark:text-white mb-1">
+            잠깐 문제가 생겼어요
+          </p>
+          <p className="text-[13.5px] text-gray-400 dark:text-[#666] leading-relaxed">
+            일시적인 오류예요. 다시 한번 시도해주세요.
+          </p>
+        </div>
+        <div className="flex gap-2 w-full">
+          <button
+            onClick={() => { setIsError(false) }}
+            className="flex-1 py-3.5 rounded-[12px] bg-gray-900 dark:bg-zinc-200 text-white dark:text-zinc-900 font-semibold text-[14px] hover:bg-gray-700 dark:hover:bg-zinc-300 transition-colors"
+          >
+            다시 시도
+          </button>
+          <button
+            onClick={() => setShowFeedback(true)}
+            className="flex-1 py-3.5 rounded-[12px] border border-gray-200 dark:border-white/[0.12] text-gray-600 dark:text-[#aaa] font-semibold text-[14px] hover:bg-gray-50 dark:hover:bg-[#1a1a1a] transition-colors"
+          >
+            피드백 보내기
+          </button>
+        </div>
+      </div>
+      {showFeedback && <FeedbackModal onClose={() => setShowFeedback(false)} />}
+    </>
+  )
 
   const showTyping = !goal && !isFocused
 
