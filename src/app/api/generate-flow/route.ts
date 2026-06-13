@@ -205,11 +205,10 @@ export async function POST(req: NextRequest) {
     }
 
     const result = await genAI.models.generateContent({
-      model: 'gemini-2.5-flash',
+      model: 'gemini-2.0-flash',
       contents: goal,
       config: {
         systemInstruction: SYSTEM_PROMPT,
-        tools: [{ googleSearch: {} }],
       },
     })
 
@@ -219,7 +218,6 @@ export async function POST(req: NextRequest) {
     const jsonStr = text
       .replace(/^```json\s*/i, '')
       .replace(/\s*```$/, '')
-      .replace(/\[\d+\]/g, '')   // [1], [2] citation 마커 제거
       .trim()
     const flow: Flow = JSON.parse(jsonStr)
 
