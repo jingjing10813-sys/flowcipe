@@ -34,7 +34,11 @@ export function SaveFloatingButton({ flow }: SaveFloatingButtonProps) {
       setShowLogin(true)
       return
     }
-    await saveRecipe(email, flow)
+    const ok = await saveRecipe(email, flow)
+    if (!ok) {
+      alert('저장에 실패했어요. 잠시 후 다시 시도해주세요.')
+      return
+    }
     trackRecipeSaved(flow.id, flow.goal)
     setSaved(true)
     setTimeout(() => router.push('/recipe-book'), 600)

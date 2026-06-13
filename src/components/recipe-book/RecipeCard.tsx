@@ -17,6 +17,12 @@ interface RecipeCardProps {
   userEmail: string
 }
 
+function formatDate(iso: string) {
+  const d = new Date(iso)
+  if (isNaN(d.getTime())) return ''
+  return `${d.getFullYear()}.${String(d.getMonth() + 1).padStart(2, '0')}.${String(d.getDate()).padStart(2, '0')}`
+}
+
 export function RecipeCard({ flow, onRemove, userEmail }: RecipeCardProps) {
   const router = useRouter()
   const [confirmDelete, setConfirmDelete] = useState(false)
@@ -67,6 +73,12 @@ export function RecipeCard({ flow, onRemove, userEmail }: RecipeCardProps) {
         <span>⏱ {flow.estimatedTime}</span>
         <span className="text-gray-200 dark:text-[#404040]">·</span>
         <span>{flow.steps.length}단계</span>
+        {flow.createdAt && (
+          <>
+            <span className="text-gray-200 dark:text-[#404040]">·</span>
+            <span>{formatDate(flow.createdAt)}</span>
+          </>
+        )}
       </div>
 
       {/* Actions */}

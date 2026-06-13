@@ -11,11 +11,16 @@ export async function getSavedRecipes(userEmail: string): Promise<Flow[]> {
   return data.map((r) => r.flow as Flow)
 }
 
-export async function saveRecipe(userEmail: string, flow: Flow): Promise<void> {
-  await supabase.from('saved_recipes').upsert(
+export async function saveRecipe(userEmail: string, flow: Flow): Promise<boolean> {
+  const { error } = await supabase.from('saved_recipes').upsert(
     { user_email: userEmail, flow_id: flow.id, flow },
     { onConflict: 'user_email,flow_id' }
   )
+  if (error) {
+    console.error('saveRecipe error:', error)
+    return false
+  }
+  return true
 }
 
 export async function isRecipeSaved(userEmail: string, flowId: string): Promise<boolean> {
