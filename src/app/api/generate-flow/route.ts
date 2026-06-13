@@ -205,7 +205,7 @@ export async function POST(req: NextRequest) {
     }
 
     const result = await genAI.models.generateContent({
-      model: 'gemini-2.5-flash',
+      model: 'gemini-test-error',
       contents: goal,
       config: {
         systemInstruction: SYSTEM_PROMPT,
