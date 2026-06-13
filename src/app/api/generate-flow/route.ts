@@ -193,6 +193,10 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: '목표를 입력해주세요' }, { status: 400 })
     }
 
+    if (goal.trim().length < 5) {
+      return NextResponse.json({ error: 'invalid_goal' }, { status: 422 })
+    }
+
     // 캐시 확인 — 동일 goal이면 기존 flow 반환
     const goalKey = normalizeGoal(goal)
     const { data: cached } = await supabase
@@ -205,7 +209,7 @@ export async function POST(req: NextRequest) {
     }
 
     const result = await genAI.models.generateContent({
-      model: 'gemini-test-error',
+      model: 'gemini-2.5-flash',
       contents: goal,
       config: {
         systemInstruction: SYSTEM_PROMPT,

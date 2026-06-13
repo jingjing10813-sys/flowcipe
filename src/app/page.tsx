@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, useEffect, useRef } from 'react'
+import { useSearchParams } from 'next/navigation'
 import { AppLayout } from '@/components/layout/AppLayout'
 import { GoalInput } from '@/components/ui/GoalInput'
 import Link from 'next/link'
@@ -200,7 +201,9 @@ function SlotDigit({ digit, pos }: { digit: string; pos: number }) {
 }
 
 export default function Home() {
-  const [goal, setGoal] = useState('')
+  const searchParams = useSearchParams()
+  const [goal, setGoal] = useState(() => searchParams.get('goal') ?? '')
+  const autoSubmit = searchParams.get('autosubmit') === '1'
   const painPointsRef = useRef<HTMLDivElement>(null)
   const [cardsVisible, setCardsVisible] = useState(false)
   const featuresRef = useRef<HTMLDivElement>(null)
@@ -285,7 +288,7 @@ export default function Home() {
           </p>
 
           <div className="max-w-[600px] mx-auto mb-6">
-            <GoalInput value={goal} onChange={setGoal} />
+            <GoalInput value={goal} onChange={setGoal} autoSubmit={autoSubmit} />
           </div>
 
           <div className="flex flex-col sm:flex-row sm:flex-wrap sm:justify-center gap-2 pb-4 px-1">
